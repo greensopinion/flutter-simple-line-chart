@@ -26,7 +26,18 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text("Line Chart Example"),
       ),
-      body: Center(child: LineChartContent()),
+      body: SafeArea(
+          child: Padding(
+              padding: EdgeInsets.only(left: 16, right: 16),
+              child: LayoutBuilder(builder:
+                  (BuildContext context, BoxConstraints viewportConstraints) {
+                return SingleChildScrollView(
+                    child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: viewportConstraints.maxHeight,
+                        ),
+                        child: LineChartContent()));
+              }))),
     );
   }
 }
