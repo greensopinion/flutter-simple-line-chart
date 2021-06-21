@@ -1,0 +1,59 @@
+import 'package:flutter/material.dart';
+
+import 'line_chart_data.dart';
+import 'style.dart';
+
+class Legend extends StatelessWidget {
+  final LineChartData data;
+  final LineChartStyle style;
+
+  const Legend({Key? key, required this.style, required this.data})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+        children: data.datasets.asMap().entries.map((e) {
+      final item = _LegendItem(
+          style: style.datasetStyleOfIndex(e.key),
+          legendStyle: style.legendStyle,
+          dataset: e.value);
+      return Padding(
+          padding: EdgeInsets.only(left: e.key == 0 ? 0 : item.boxSize),
+          child: item);
+    }).toList());
+  }
+}
+
+class _LegendItem extends StatelessWidget {
+  final Dataset dataset;
+  final DatasetStyle style;
+  final LegendStyle legendStyle;
+
+  double get boxSize => (style.textStyle.fontSize ?? _defaultFontSize);
+
+  const _LegendItem(
+      {Key? key,
+      required this.style,
+      required this.legendStyle,
+      required this.dataset})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final colorBox = SizedBox(
+        width: boxSize,
+        height: boxSize,
+        child: Container(
+            decoration: BoxDecoration(
+                border: Border.all(color: legendStyle.lineColor),
+                color: style.color)));
+    final label = Text(dataset.label, style: style.textStyle);
+    return Row(mainAxisSize: MainAxisSize.min, children: [
+      colorBox,
+      Padding(padding: EdgeInsets.only(left: boxSize / 2.0), child: label)
+    ]);
+  }
+}
+
+final double _defaultFontSize = 12.0;
