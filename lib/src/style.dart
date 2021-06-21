@@ -9,7 +9,7 @@ class LineChartStyle {
   factory LineChartStyle.fromTheme(BuildContext context) {
     final theme = Theme.of(context);
     final textStyle = theme.textTheme.bodyText1 ?? theme.textTheme.bodyText2!;
-    final lineColor = textStyle.color!;
+    final lineColor = textStyle.color!.withOpacity(0.3);
     final datasetStyles = _defaultDatasetColors()
         .map((c) => DatasetStyle(color: c, textStyle: textStyle))
         .toList();
