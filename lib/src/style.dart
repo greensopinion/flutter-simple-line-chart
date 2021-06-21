@@ -13,8 +13,10 @@ class LineChartStyle {
     final datasetStyles = _defaultDatasetColors()
         .map((c) => DatasetStyle(color: c, textStyle: textStyle))
         .toList();
+    final legendInsets =
+        EdgeInsets.only(top: textStyle.fontSize ?? LegendStyle.defaultFontSize);
     return LineChartStyle(
-        legendStyle: LegendStyle(lineColor: lineColor),
+        legendStyle: LegendStyle(lineColor: lineColor, insets: legendInsets),
         datasetStyles: datasetStyles);
   }
 
@@ -27,9 +29,11 @@ class LineChartStyle {
 }
 
 class LegendStyle {
+  static final double defaultFontSize = 12.0;
   final Color lineColor;
+  final EdgeInsets insets;
 
-  LegendStyle({required this.lineColor});
+  LegendStyle({required this.lineColor, required this.insets});
 }
 
 class DatasetStyle {

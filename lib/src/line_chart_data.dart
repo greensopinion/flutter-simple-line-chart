@@ -1,5 +1,3 @@
-import 'package:flutter/painting.dart';
-
 class LineChartData {
   final List<Dataset> datasets;
 

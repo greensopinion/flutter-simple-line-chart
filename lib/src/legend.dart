@@ -12,16 +12,18 @@ class Legend extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-        children: data.datasets.asMap().entries.map((e) {
-      final item = _LegendItem(
-          style: style.datasetStyleOfIndex(e.key),
-          legendStyle: style.legendStyle,
-          dataset: e.value);
-      return Padding(
-          padding: EdgeInsets.only(left: e.key == 0 ? 0 : item.boxSize),
-          child: item);
-    }).toList());
+    return Padding(
+        padding: style.legendStyle.insets,
+        child: Wrap(
+            children: data.datasets.asMap().entries.map((e) {
+          final item = _LegendItem(
+              style: style.datasetStyleOfIndex(e.key),
+              legendStyle: style.legendStyle,
+              dataset: e.value);
+          return Padding(
+              padding: EdgeInsets.only(left: e.key == 0 ? 0 : item.boxSize),
+              child: item);
+        }).toList()));
   }
 }
 
@@ -30,7 +32,8 @@ class _LegendItem extends StatelessWidget {
   final DatasetStyle style;
   final LegendStyle legendStyle;
 
-  double get boxSize => (style.textStyle.fontSize ?? _defaultFontSize);
+  double get boxSize =>
+      (style.textStyle.fontSize ?? LegendStyle.defaultFontSize);
 
   const _LegendItem(
       {Key? key,
@@ -55,5 +58,3 @@ class _LegendItem extends StatelessWidget {
     ]);
   }
 }
-
-final double _defaultFontSize = 12.0;
