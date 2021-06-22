@@ -39,12 +39,12 @@ class LineChartStyle {
             textStyle: textStyle,
             lineColor: lineColor,
             labelProvider: (point) => _defaultLabelProvider(point.x),
-            labelInsets: EdgeInsets.only(bottom: fontSize / 4)),
+            labelInsets: EdgeInsets.only(bottom: fontSize / 2)),
         bottomAxisStyle: AxisStyle(
             textStyle: textStyle,
             lineColor: lineColor,
             labelProvider: (point) => _defaultLabelProvider(point.x),
-            labelInsets: EdgeInsets.only(top: fontSize / 4)),
+            labelInsets: EdgeInsets.only(top: fontSize / 2)),
         leftAxisStyle: AxisStyle(
             textStyle: textStyle,
             labelInsets: EdgeInsets.only(right: fontSize / 2),

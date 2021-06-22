@@ -147,18 +147,14 @@ class _ChartArea extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       final children = <Widget>[];
-
-      children.add(Expanded(
-          child: Stack(fit: StackFit.expand, children: [
-        LineChartGrid(
-            style: (style.topAxisStyle ?? style.bottomAxisStyle)!,
-            xLabeller: xLabeller,
-            yLabeller: yLabeller)
-      ])));
+      children.add(LineChartGrid(
+          style: (style.topAxisStyle ?? style.bottomAxisStyle)!,
+          xLabeller: xLabeller,
+          yLabeller: yLabeller));
       return Container(
         width: constraints.maxWidth,
         height: constraints.maxHeight,
-        child: Stack(children: children),
+        child: Stack(fit: StackFit.expand, children: children),
       );
     });
   }
