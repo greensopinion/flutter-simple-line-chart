@@ -4,6 +4,7 @@ import 'package:simple_line_chart/src/style.dart';
 import 'package:simple_line_chart/src/x_axis.dart';
 
 import '../simple_line_chart.dart';
+import 'axis_labeller.dart';
 import 'legend.dart';
 
 class LineChart extends StatelessWidget {
@@ -15,15 +16,34 @@ class LineChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final children = <Widget>[];
-    if (style.topAxisStyle != null) {
-      children.add(XAxis(style: style.topAxisStyle!, data: data));
-    }
-    children.add(Expanded(child: Stack(children: [LineChartGrid()])));
-    if (style.bottomAxisStyle != null) {
-      children.add(XAxis(style: style.bottomAxisStyle!, data: data));
-    }
-    children.add(Legend(style: style, data: data));
-    return Column(children: children);
+    return LayoutBuilder(builder: (context, constraints) {
+      final children = <Widget>[];
+      AxisLabeller? topAxisLabeller;
+      AxisLabeller? bottomAxisLabeller;
+      if (style.topAxisStyle != null) {
+        topAxisLabeller = AxisLabeller(style.topAxisStyle!, data, constraints);
+        children.add(XAxis(
+            style: style.topAxisStyle!, labeller: topAxisLabeller, data: data));
+      }
+      if (style.bottomAxisStyle != null) {
+        bottomAxisLabeller =
+            AxisLabeller(style.bottomAxisStyle!, data, constraints);
+      }
+      children.add(Expanded(
+          child: Stack(fit: StackFit.expand, children: [
+        LineChartGrid(
+            style: (style.topAxisStyle ?? style.bottomAxisStyle)!,
+            labeller: (topAxisLabeller ?? bottomAxisLabeller)!)
+      ])));
+      if (style.bottomAxisStyle != null) {
+        children.add(XAxis(
+            style: style.bottomAxisStyle!,
+            labeller: bottomAxisLabeller!,
+            data: data));
+      }
+      children.add(Legend(style: style, data: data));
+      return Column(
+          crossAxisAlignment: CrossAxisAlignment.start, children: children);
+    });
   }
 }

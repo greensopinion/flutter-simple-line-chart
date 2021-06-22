@@ -13,7 +13,9 @@ class LineChartStyle {
       {required this.legendStyle,
       required this.datasetStyles,
       this.topAxisStyle,
-      this.bottomAxisStyle});
+      this.bottomAxisStyle}) {
+    assert(topAxisStyle != null || bottomAxisStyle != null);
+  }
 
   factory LineChartStyle.fromTheme(BuildContext context) {
     final theme = Theme.of(context);
