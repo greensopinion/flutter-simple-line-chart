@@ -7,6 +7,7 @@ import 'package:simple_line_chart/src/y_axis.dart';
 import '../simple_line_chart.dart';
 import 'axis_labeller.dart';
 import 'legend.dart';
+import 'line_chart_data_series.dart';
 
 class LineChart extends StatelessWidget {
   final LineChartData data;
@@ -146,15 +147,16 @@ class _ChartArea extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      final children = <Widget>[];
-      children.add(LineChartGrid(
-          style: (style.topAxisStyle ?? style.bottomAxisStyle)!,
-          xLabeller: xLabeller,
-          yLabeller: yLabeller));
       return Container(
         width: constraints.maxWidth,
         height: constraints.maxHeight,
-        child: Stack(fit: StackFit.expand, children: children),
+        child: Stack(fit: StackFit.expand, children: [
+          LineChartGrid(
+              style: (style.topAxisStyle ?? style.bottomAxisStyle)!,
+              xLabeller: xLabeller,
+              yLabeller: yLabeller),
+          LineChartDataSeries(style: style, data: data)
+        ]),
       );
     });
   }

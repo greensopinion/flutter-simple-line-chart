@@ -110,8 +110,10 @@ class LegendStyle {
 }
 
 class DatasetStyle {
+  static const double defaultLineSize = _defaultLineSize;
   final Color color;
-  DatasetStyle({required this.color});
+  final double lineSize;
+  DatasetStyle({required this.color, this.lineSize = defaultLineSize});
 }
 
 List<Color> _defaultDatasetColors() =>
