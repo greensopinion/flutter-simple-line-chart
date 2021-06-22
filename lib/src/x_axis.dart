@@ -28,8 +28,7 @@ class XAxis extends StatelessWidget {
       return Container(height: style.textStyle.height);
     }
     final labelPoints = labeller.labelPoints();
-    final children =
-        labelPoints.where((p) => p.farEdge < labeller.length).map((p) {
+    final children = labelPoints.map((p) {
       return Positioned(child: Text(p.text), left: p.offset + labelOffset);
     }).toList();
     return Container(
