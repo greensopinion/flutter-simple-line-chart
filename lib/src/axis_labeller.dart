@@ -19,6 +19,7 @@ class AxisLabeller {
 
   double get fontSize => style.textStyle.fontSize ?? AxisStyle.defaultFontSize;
   double get spacing => fontSize;
+  double get width => labelPoints().map((e) => e.width).reduce(max);
 
   List<LabelPoint> labelPoints() {
     if (data.datasets.isEmpty || data.datasets.first.dataPoints.length < 2) {

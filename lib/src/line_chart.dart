@@ -78,7 +78,7 @@ class _ChartSlab extends StatelessWidget {
           ? null
           : AxisLabeller(
               style.topAxisStyle!, data, AxisDimension.X, constraints.maxWidth);
-      ;
+
       AxisLabeller? bottomAxisLabeller = style.bottomAxisStyle == null
           ? null
           : AxisLabeller(style.bottomAxisStyle!, data, AxisDimension.X,

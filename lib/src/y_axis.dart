@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:simple_line_chart/src/axis_labeller.dart';
 
@@ -35,7 +33,7 @@ class YAxis extends StatelessWidget {
     }
     return LayoutBuilder(builder: (context, constraints) {
       final labelPoints = labeller.labelPoints();
-      final width = labeller.labelPoints().map((e) => e.width).reduce(max);
+      final width = labeller.width;
       final children = labelPoints.map((p) {
         return Positioned(
             child: Text(p.text),
