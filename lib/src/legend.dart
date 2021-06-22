@@ -33,7 +33,7 @@ class _LegendItem extends StatelessWidget {
   final LegendStyle legendStyle;
 
   double get boxSize =>
-      (style.textStyle.fontSize ?? LegendStyle.defaultFontSize);
+      (legendStyle.textStyle.fontSize ?? LegendStyle.defaultFontSize);
 
   const _LegendItem(
       {Key? key,
@@ -51,7 +51,7 @@ class _LegendItem extends StatelessWidget {
             decoration: BoxDecoration(
                 border: Border.all(color: legendStyle.lineColor),
                 color: style.color)));
-    final label = Text(dataset.label, style: style.textStyle);
+    final label = Text(dataset.label, style: legendStyle.textStyle);
     return Row(mainAxisSize: MainAxisSize.min, children: [
       colorBox,
       Padding(padding: EdgeInsets.only(left: boxSize / 2.0), child: label)

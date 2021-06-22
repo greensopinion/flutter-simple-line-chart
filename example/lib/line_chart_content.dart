@@ -29,7 +29,14 @@ class _LineChartContentState extends State<LineChartContent> {
 
   @override
   Widget build(BuildContext context) {
-    return LineChart(style: LineChartStyle.fromTheme(context), data: data);
+    return Column(children: [
+      Padding(
+          padding: EdgeInsets.only(top: 20),
+          child: SizedBox(
+              height: 400,
+              child: LineChart(
+                  style: LineChartStyle.fromTheme(context), data: data)))
+    ]);
   }
 }
 
