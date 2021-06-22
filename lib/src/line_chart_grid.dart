@@ -29,9 +29,9 @@ class _GridPainter extends CustomPainter {
       ..isAntiAlias = true
       ..style = PaintingStyle.stroke;
     canvas.drawRect(Offset.zero & size, linePaint);
-    labeller.xLabelPoints().forEach((p) {
-      canvas.drawLine(Offset(p.centerOffset, 0),
-          Offset(p.centerOffset, size.height), linePaint);
+    labeller.labelPoints().forEach((p) {
+      canvas.drawLine(
+          Offset(p.center, 0), Offset(p.center, size.height), linePaint);
     });
   }
 

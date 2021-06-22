@@ -8,13 +8,18 @@ class LineChartStyle {
   final List<DatasetStyle> datasetStyles;
   final AxisStyle? topAxisStyle;
   final AxisStyle? bottomAxisStyle;
+  final AxisStyle? leftAxisStyle;
+  final AxisStyle? rightAxisStyle;
 
   LineChartStyle(
       {required this.legendStyle,
       required this.datasetStyles,
       this.topAxisStyle,
-      this.bottomAxisStyle}) {
+      this.bottomAxisStyle,
+      this.leftAxisStyle,
+      this.rightAxisStyle}) {
     assert(topAxisStyle != null || bottomAxisStyle != null);
+    assert(leftAxisStyle != null || rightAxisStyle != null);
   }
 
   factory LineChartStyle.fromTheme(BuildContext context) {
@@ -39,7 +44,17 @@ class LineChartStyle {
             textStyle: textStyle,
             lineColor: lineColor,
             labelProvider: (point) => _defaultLabelProvider(point.x),
-            labelInsets: EdgeInsets.only(top: fontSize / 4)));
+            labelInsets: EdgeInsets.only(top: fontSize / 4)),
+        leftAxisStyle: AxisStyle(
+            textStyle: textStyle,
+            labelInsets: EdgeInsets.only(right: fontSize / 2),
+            labelProvider: (point) => _defaultLabelProvider(point.y),
+            lineColor: lineColor),
+        rightAxisStyle: AxisStyle(
+            textStyle: textStyle,
+            labelInsets: EdgeInsets.only(left: fontSize / 2),
+            labelProvider: (point) => _defaultLabelProvider(point.y),
+            lineColor: lineColor));
   }
 
   DatasetStyle datasetStyleOfIndex(int index) {
@@ -61,6 +76,9 @@ class AxisStyle {
   final EdgeInsets labelInsets;
   final Color lineColor;
   final double lineSize;
+  final double? absoluteMin;
+  final double? absoluteMax;
+  final double? valueMargin;
 
   AxisStyle(
       {required this.textStyle,
@@ -69,7 +87,12 @@ class AxisStyle {
       required this.lineColor,
       this.lineSize = _defaultLineSize,
       this.drawLabels = true,
-      this.maxLabels = 20});
+      this.maxLabels = 20,
+      this.absoluteMin,
+      this.absoluteMax,
+      this.valueMargin});
+
+  double get fontSize => textStyle.fontSize ?? defaultFontSize;
 }
 
 class LegendStyle {
@@ -80,6 +103,8 @@ class LegendStyle {
 
   LegendStyle(
       {required this.lineColor, required this.textStyle, required this.insets});
+
+  double get fontSize => textStyle.fontSize ?? defaultFontSize;
 }
 
 class DatasetStyle {
