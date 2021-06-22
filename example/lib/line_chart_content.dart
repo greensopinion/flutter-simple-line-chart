@@ -33,7 +33,7 @@ class _LineChartContentState extends State<LineChartContent> {
       Padding(
           padding: EdgeInsets.only(top: 20),
           child: SizedBox(
-              height: 400,
+              height: 300,
               child: LineChart(
                   style: LineChartStyle.fromTheme(context), data: data)))
     ]);

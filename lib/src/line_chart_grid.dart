@@ -36,12 +36,22 @@ class _GridPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
     canvas.drawRect(Offset.zero & size, linePaint);
     xLabeller.labelPoints().forEach((p) {
-      canvas.drawLine(
-          Offset(p.center, 0), Offset(p.center, size.height), linePaint);
+      final rightProximity = (p.center - size.width).abs();
+      final leftProximity = p.center;
+      final margin = 4 * style.lineSize;
+      if (rightProximity > margin && leftProximity > margin) {
+        canvas.drawLine(
+            Offset(p.center, 0), Offset(p.center, size.height), linePaint);
+      }
     });
     yLabeller.labelPoints().forEach((p) {
-      canvas.drawLine(
-          Offset(0, p.center), Offset(size.width, p.center), linePaint);
+      final bottomProximity = (p.center - size.height).abs();
+      final topProximity = p.center;
+      final margin = 4 * style.lineSize;
+      if (bottomProximity > margin && topProximity > margin) {
+        canvas.drawLine(
+            Offset(0, p.center), Offset(size.width, p.center), linePaint);
+      }
     });
   }
 
