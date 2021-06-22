@@ -8,11 +8,13 @@ class XAxis extends StatelessWidget {
   final AxisStyle style;
   final LineChartData data;
   final AxisLabeller labeller;
+  final double labelOffset;
 
   const XAxis(
       {Key? key,
       required this.style,
       required this.labeller,
+      required this.labelOffset,
       required this.data})
       : super(key: key);
 
@@ -25,17 +27,15 @@ class XAxis extends StatelessWidget {
     if (data.datasets.isEmpty || data.datasets.first.dataPoints.length < 2) {
       return Container(height: style.textStyle.height);
     }
-    return LayoutBuilder(builder: (context, constraints) {
-      final labelPoints = labeller.labelPoints();
-      final children =
-          labelPoints.where((p) => p.farEdge < labeller.length).map((p) {
-        return Positioned(child: Text(p.text), left: p.offset);
-      }).toList();
-      return Container(
-        width: labeller.length,
-        height: labeller.fontSize,
-        child: Stack(children: children),
-      );
-    });
+    final labelPoints = labeller.labelPoints();
+    final children =
+        labelPoints.where((p) => p.farEdge < labeller.length).map((p) {
+      return Positioned(child: Text(p.text), left: p.offset + labelOffset);
+    }).toList();
+    return Container(
+      width: labeller.length,
+      height: labeller.fontSize,
+      child: Stack(children: children),
+    );
   }
 }

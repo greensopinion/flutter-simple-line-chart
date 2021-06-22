@@ -100,11 +100,13 @@ class LegendStyle {
   final Color lineColor;
   final TextStyle textStyle;
   final EdgeInsets insets;
+  final borderSize = 1.0;
 
   LegendStyle(
       {required this.lineColor, required this.textStyle, required this.insets});
 
   double get fontSize => textStyle.fontSize ?? defaultFontSize;
+  double get height => fontSize + insets.top + insets.bottom + (borderSize * 2);
 }
 
 class DatasetStyle {

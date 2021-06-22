@@ -49,7 +49,9 @@ class _LegendItem extends StatelessWidget {
         height: boxSize,
         child: Container(
             decoration: BoxDecoration(
-                border: Border.all(color: legendStyle.lineColor),
+                border: Border.all(
+                    color: legendStyle.lineColor,
+                    width: legendStyle.borderSize),
                 color: style.color)));
     final label = Text(dataset.label, style: legendStyle.textStyle);
     return Row(mainAxisSize: MainAxisSize.min, children: [

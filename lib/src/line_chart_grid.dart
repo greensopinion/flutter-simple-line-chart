@@ -5,21 +5,27 @@ import 'axis_labeller.dart';
 
 class LineChartGrid extends StatelessWidget {
   final AxisStyle style;
-  final AxisLabeller labeller;
+  final AxisLabeller xLabeller;
+  final AxisLabeller yLabeller;
 
-  const LineChartGrid({Key? key, required this.style, required this.labeller})
+  const LineChartGrid(
+      {Key? key,
+      required this.style,
+      required this.xLabeller,
+      required this.yLabeller})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(painter: _GridPainter(style, labeller));
+    return CustomPaint(painter: _GridPainter(style, xLabeller, yLabeller));
   }
 }
 
 class _GridPainter extends CustomPainter {
   final AxisStyle style;
-  final AxisLabeller labeller;
-  _GridPainter(this.style, this.labeller);
+  final AxisLabeller xLabeller;
+  final AxisLabeller yLabeller;
+  _GridPainter(this.style, this.xLabeller, this.yLabeller);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -29,9 +35,13 @@ class _GridPainter extends CustomPainter {
       ..isAntiAlias = true
       ..style = PaintingStyle.stroke;
     canvas.drawRect(Offset.zero & size, linePaint);
-    labeller.labelPoints().forEach((p) {
+    xLabeller.labelPoints().forEach((p) {
       canvas.drawLine(
           Offset(p.center, 0), Offset(p.center, size.height), linePaint);
+    });
+    yLabeller.labelPoints().forEach((p) {
+      canvas.drawLine(
+          Offset(0, p.center), Offset(size.width, p.center), linePaint);
     });
   }
 

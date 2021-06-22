@@ -23,6 +23,8 @@ class LineChart extends StatelessWidget {
       final legendHeight = _legendHeight();
       final bottomInset = _xAxisHeight(style.bottomAxisStyle) + legendHeight;
       final verticalAxisInset = topInset + bottomInset;
+      var leftAxisWidth = 0.0;
+      var rightAxisWidth = 0.0;
       AxisLabeller? leftAxisLabeller = style.leftAxisStyle == null
           ? null
           : AxisLabeller(style.leftAxisStyle!, data, AxisDimension.Y,
@@ -32,24 +34,91 @@ class LineChart extends StatelessWidget {
           : AxisLabeller(style.rightAxisStyle!, data, AxisDimension.Y,
               constraints.maxHeight - verticalAxisInset);
       if (leftAxisLabeller != null) {
-        children.add(YAxis(
-            style: leftAxisLabeller.style,
-            labeller: leftAxisLabeller,
-            side: YAxisSide.LEFT,
-            labelOffset: topInset,
-            data: data));
+        leftAxisWidth = leftAxisLabeller.width +
+            leftAxisLabeller.style.labelInsets.left +
+            leftAxisLabeller.style.labelInsets.right;
+        children.add(Positioned(
+            left: 0,
+            top: 0,
+            width: leftAxisWidth,
+            height: constraints.maxHeight,
+            child: YAxis(
+                style: leftAxisLabeller.style,
+                labeller: leftAxisLabeller,
+                side: YAxisSide.LEFT,
+                labelOffset: topInset,
+                data: data)));
       }
-      children.add(Expanded(child: _ChartSlab(data: data, style: style)));
       if (rightAxisLabeller != null) {
-        children.add(YAxis(
-            style: rightAxisLabeller.style,
-            labeller: rightAxisLabeller,
-            side: YAxisSide.RIGHT,
-            labelOffset: topInset,
-            data: data));
+        rightAxisWidth = rightAxisLabeller.width +
+            rightAxisLabeller.style.labelInsets.left +
+            rightAxisLabeller.style.labelInsets.right;
+        children.add(Positioned(
+            left: constraints.maxWidth - rightAxisWidth,
+            top: 0,
+            width: rightAxisWidth,
+            height: constraints.maxHeight,
+            child: YAxis(
+                style: rightAxisLabeller.style,
+                labeller: rightAxisLabeller,
+                side: YAxisSide.RIGHT,
+                labelOffset: topInset,
+                data: data)));
       }
-      return Row(
-          crossAxisAlignment: CrossAxisAlignment.start, children: children);
+      AxisLabeller? topAxisLabeller = style.topAxisStyle == null
+          ? null
+          : AxisLabeller(style.topAxisStyle!, data, AxisDimension.X,
+              constraints.maxWidth - leftAxisWidth - rightAxisWidth);
+
+      AxisLabeller? bottomAxisLabeller = style.bottomAxisStyle == null
+          ? null
+          : AxisLabeller(style.bottomAxisStyle!, data, AxisDimension.X,
+              constraints.maxWidth - leftAxisWidth - rightAxisWidth);
+      if (topAxisLabeller != null) {
+        children.add(Positioned(
+            left: 0,
+            top: 0,
+            width: constraints.maxWidth,
+            height: topInset,
+            child: XAxis(
+                style: topAxisLabeller.style,
+                labeller: topAxisLabeller,
+                labelOffset: leftAxisWidth,
+                data: data)));
+      }
+      if (bottomAxisLabeller != null) {
+        children.add(Positioned(
+            left: 0,
+            top: constraints.maxHeight - bottomInset,
+            width: constraints.maxWidth,
+            height: topInset,
+            child: XAxis(
+                style: bottomAxisLabeller.style,
+                labeller: bottomAxisLabeller,
+                labelOffset: leftAxisWidth,
+                data: data)));
+      }
+      children.add(Positioned(
+          left: leftAxisWidth,
+          top: topInset,
+          width: constraints.maxWidth - leftAxisWidth - rightAxisWidth,
+          height: constraints.maxHeight - topInset - bottomInset,
+          child: _ChartArea(
+              data: data,
+              style: style,
+              xLabeller: bottomAxisLabeller ?? topAxisLabeller!,
+              yLabeller: leftAxisLabeller ?? rightAxisLabeller!)));
+      children.add(Positioned(
+          left: leftAxisWidth,
+          top: constraints.maxHeight - legendHeight,
+          width: constraints.maxWidth - leftAxisWidth - rightAxisWidth,
+          height: topInset,
+          child: Legend(style: style, data: data)));
+      return Container(
+        width: constraints.maxWidth,
+        height: constraints.maxHeight,
+        child: Stack(children: children),
+      );
     });
   }
 
@@ -57,53 +126,40 @@ class LineChart extends StatelessWidget {
       ? 0.0
       : style.fontSize + style.labelInsets.bottom + style.labelInsets.top;
 
-  double _legendHeight() =>
-      style.legendStyle.fontSize +
-      style.legendStyle.insets.bottom +
-      style.legendStyle.insets.top;
+  double _legendHeight() => style.legendStyle.height;
 }
 
-class _ChartSlab extends StatelessWidget {
+class _ChartArea extends StatelessWidget {
   final LineChartData data;
   final LineChartStyle style;
+  final AxisLabeller xLabeller;
+  final AxisLabeller yLabeller;
 
-  const _ChartSlab({Key? key, required this.style, required this.data})
+  const _ChartArea(
+      {Key? key,
+      required this.style,
+      required this.data,
+      required this.xLabeller,
+      required this.yLabeller})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       final children = <Widget>[];
-      AxisLabeller? topAxisLabeller = style.topAxisStyle == null
-          ? null
-          : AxisLabeller(
-              style.topAxisStyle!, data, AxisDimension.X, constraints.maxWidth);
 
-      AxisLabeller? bottomAxisLabeller = style.bottomAxisStyle == null
-          ? null
-          : AxisLabeller(style.bottomAxisStyle!, data, AxisDimension.X,
-              constraints.maxWidth);
-      if (topAxisLabeller != null) {
-        children.add(XAxis(
-            style: topAxisLabeller.style,
-            labeller: topAxisLabeller,
-            data: data));
-      }
       children.add(Expanded(
           child: Stack(fit: StackFit.expand, children: [
         LineChartGrid(
             style: (style.topAxisStyle ?? style.bottomAxisStyle)!,
-            labeller: (topAxisLabeller ?? bottomAxisLabeller)!)
+            xLabeller: xLabeller,
+            yLabeller: yLabeller)
       ])));
-      if (bottomAxisLabeller != null) {
-        children.add(XAxis(
-            style: bottomAxisLabeller.style,
-            labeller: bottomAxisLabeller,
-            data: data));
-      }
-      children.add(Legend(style: style, data: data));
-      return Column(
-          crossAxisAlignment: CrossAxisAlignment.start, children: children);
+      return Container(
+        width: constraints.maxWidth,
+        height: constraints.maxHeight,
+        child: Stack(children: children),
+      );
     });
   }
 }
