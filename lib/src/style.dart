@@ -113,7 +113,11 @@ class DatasetStyle {
   static const double defaultLineSize = _defaultLineSize;
   final Color color;
   final double lineSize;
-  DatasetStyle({required this.color, this.lineSize = defaultLineSize});
+  final double cubicIntensity;
+  DatasetStyle(
+      {required this.color,
+      this.lineSize = defaultLineSize,
+      this.cubicIntensity = 0.2});
 }
 
 List<Color> _defaultDatasetColors() =>

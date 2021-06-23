@@ -43,7 +43,7 @@ class _LineChartContentState extends State<LineChartContent> {
 List<DataPoint> _createDataPoints({required int offsetInDegrees}) {
   List<DataPoint> dataPoints = [];
   final degreesToRadians = (pi / 180);
-  for (int x = 0; x < 180; ++x) {
+  for (int x = 0; x < 180; x += 20) {
     final di = (x * 2).toDouble() * degreesToRadians;
     dataPoints.add(DataPoint(
         x: x.toDouble(), y: 100.0 * ((sin(di + offsetInDegrees) + 1.0) / 2.0)));
