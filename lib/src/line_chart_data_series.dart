@@ -69,9 +69,10 @@ class _LineChartDataSeriesPainter extends CustomPainter {
       ..strokeWidth = datasetStyle.lineSize
       ..isAntiAlias = true
       ..style = PaintingStyle.stroke;
-
+    if (dataset.dataPoints.length <= 1) {
+      return;
+    }
     Path path = Path();
-
     final points = dataset.dataPoints
         .map((e) => e.toOffset())
         .map((e) => projection.toPixel(data: e))
@@ -81,8 +82,9 @@ class _LineChartDataSeriesPainter extends CustomPainter {
       final end = points[index];
       if (index == 0) {
         path.moveTo(end.dx, end.dy);
+      } else if (index == 1 && points.length == 2) {
+        path.lineTo(end.dx, end.dy);
       } else {
-        final end = points[index];
         final start = points[index - 1];
         final previousStart = index < 2 ? start : points[index - 2];
         final next = (index + 1 == points.length) ? end : points[index + 1];
@@ -94,6 +96,19 @@ class _LineChartDataSeriesPainter extends CustomPainter {
       }
     }
     canvas.drawPath(path, linePaint);
+
+    final last = projection.toPixel(data: dataset.dataPoints.last.toOffset());
+    final first = projection.toPixel(data: dataset.dataPoints.first.toOffset());
+    final fillLine = projection.toPixel(data: Offset(0, 0));
+    path.lineTo(last.dx, fillLine.dy);
+    path.lineTo(first.dx, fillLine.dy);
+    path.close();
+
+    final fillPaint = Paint()
+      ..color = datasetStyle.color.withOpacity(datasetStyle.fillOpacity)
+      ..isAntiAlias = true
+      ..style = PaintingStyle.fill;
+    canvas.drawPath(path, fillPaint);
   }
 
   Offset _toDelta(

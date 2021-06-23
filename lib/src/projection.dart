@@ -24,7 +24,7 @@ class Projection {
   }
 
   Offset toPixel({required Offset data}) {
-    var y = ((data.dy - minY) / yRange) * size.height;
+    var y = size.height - ((data.dy - minY) / yRange) * size.height;
     var x = ((data.dx - minX) / xRange) * size.width;
     return Offset(x, y);
   }

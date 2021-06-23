@@ -112,10 +112,13 @@ class LegendStyle {
 class DatasetStyle {
   static const double defaultLineSize = _defaultLineSize;
   final Color color;
+  final double fillOpacity;
   final double lineSize;
   final double cubicIntensity;
+
   DatasetStyle(
       {required this.color,
+      this.fillOpacity = 0.25,
       this.lineSize = defaultLineSize,
       this.cubicIntensity = 0.2});
 }
