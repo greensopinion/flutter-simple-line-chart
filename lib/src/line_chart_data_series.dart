@@ -116,12 +116,10 @@ class _LineChartDataSeriesPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    final unChanged = oldDelegate is _LineChartDataSeriesPainter &&
+    return oldDelegate is _LineChartDataSeriesPainter &&
         oldDelegate.data == data &&
         oldDelegate.style == style &&
         oldDelegate.animation.value == animation.value;
-    print('unChanged; $unChanged');
-    return !unChanged;
   }
 
   void _paint(Canvas canvas, Projection projection, DatasetStyle datasetStyle,
