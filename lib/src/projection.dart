@@ -7,6 +7,7 @@ class Projection {
   final LineChartStyle style;
   final Size size;
   final LineChartData data;
+  late final double _yTransform;
   late final double minX;
   late final double minY;
   late final double maxX;
@@ -15,6 +16,7 @@ class Projection {
   late final double yRange;
 
   Projection(this.style, this.size, this.data) {
+    _yTransform = 1.0;
     minX = data.minX;
     minY = _minY();
     maxX = data.maxX;
@@ -23,8 +25,18 @@ class Projection {
     yRange = maxY - minY;
   }
 
+  Projection._(this.style, this.size, this.data, this.minX, this.minY,
+      this.maxX, this.maxY, this.xRange, this.yRange, this._yTransform);
+
+  Projection yTransform(double transform) {
+    assert(transform >= 0 && transform <= 1.0);
+    return Projection._(
+        style, size, data, minX, minY, maxX, maxY, xRange, yRange, transform);
+  }
+
   Offset toPixel({required Offset data}) {
-    var y = size.height - ((data.dy - minY) / yRange) * size.height;
+    var y =
+        size.height - (((data.dy - minY) / yRange) * size.height) * _yTransform;
     var x = ((data.dx - minX) / xRange) * size.width;
     return Offset(x, y);
   }

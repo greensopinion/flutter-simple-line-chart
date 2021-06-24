@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:simple_line_chart/src/projection.dart';
 
@@ -19,31 +17,51 @@ class LineChartDataSeries extends StatefulWidget {
   }
 }
 
-class _LineChartDataSeriesState extends State<LineChartDataSeries> {
+class _LineChartDataSeriesState extends State<LineChartDataSeries>
+    with SingleTickerProviderStateMixin {
   final LineChartData data;
   final LineChartStyle style;
   late final _LineChartDataSeriesPainter painter;
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
 
   _LineChartDataSeriesState(this.data, this.style);
 
   @override
   void initState() {
     super.initState();
-    painter = _LineChartDataSeriesPainter(data, style);
+    _controller = AnimationController(
+        duration: style.animationDuration ?? Duration(seconds: 0), vsync: this);
+    _animation = Tween<double>(begin: 0, end: 1.0).animate(_controller)
+      ..addListener(() {
+        setState(() {});
+      });
+    painter = _LineChartDataSeriesPainter(data, style, _animation);
+    _controller.forward();
   }
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(painter: painter);
+    return CustomPaint(
+        key: Key('${widget.key}_LineChartDataSeriesState${_animation.value}'),
+        painter: painter,
+        willChange: !_animation.isCompleted);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
   }
 }
 
 class _LineChartDataSeriesPainter extends CustomPainter {
   final LineChartData data;
   final LineChartStyle style;
+  final Animation<double> animation;
   Projection? projection;
 
-  _LineChartDataSeriesPainter(this.data, this.style);
+  _LineChartDataSeriesPainter(this.data, this.style, this.animation);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -52,14 +70,15 @@ class _LineChartDataSeriesPainter extends CustomPainter {
     Projection projection = _projection(size);
     data.datasets.asMap().forEach((index, dataset) {
       final datasetStyle = style.datasetStyleOfIndex(index);
-      _paint(canvas, projection, datasetStyle, dataset);
+      _paint(canvas, projection.yTransform(animation.value), datasetStyle,
+          dataset);
     });
     canvas.restore();
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
+    return !animation.isCompleted;
   }
 
   void _paint(Canvas canvas, Projection projection, DatasetStyle datasetStyle,
@@ -91,8 +110,8 @@ class _LineChartDataSeriesPainter extends CustomPainter {
         final delta1 =
             _toDelta(right: end, left: previousStart, intensity: intensity);
         final delta2 = _toDelta(right: next, left: start, intensity: intensity);
-        path.cubicTo(start.dx + delta1.dx, start.dy + delta1.dy,
-            end.dx - delta2.dx, end.dy - delta2.dy, end.dx, end.dy);
+        path.cubicTo(start.dx + delta1.dx, (start.dy + delta1.dy),
+            end.dx - delta2.dx, (end.dy - delta2.dy), end.dx, end.dy);
       }
     }
     canvas.drawPath(path, linePaint);

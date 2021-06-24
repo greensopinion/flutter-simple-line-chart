@@ -10,6 +10,7 @@ class LineChartStyle {
   final AxisStyle? bottomAxisStyle;
   final AxisStyle? leftAxisStyle;
   final AxisStyle? rightAxisStyle;
+  final Duration? animationDuration;
 
   LineChartStyle(
       {required this.legendStyle,
@@ -17,7 +18,8 @@ class LineChartStyle {
       this.topAxisStyle,
       this.bottomAxisStyle,
       this.leftAxisStyle,
-      this.rightAxisStyle}) {
+      this.rightAxisStyle,
+      this.animationDuration = const Duration(seconds: 1)}) {
     assert(topAxisStyle != null || bottomAxisStyle != null);
     assert(leftAxisStyle != null || rightAxisStyle != null);
   }
