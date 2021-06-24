@@ -194,9 +194,9 @@ List<Color> _defaultDatasetColors() =>
 
 class _Colors {
   static final _opaque = 0xff;
-  static final Color primary = Color.fromARGB(_opaque, 56, 142, 60);
-  static final Color secondary = Color.fromARGB(_opaque, 25, 118, 210);
-  static final Color tertiary = Color.fromARGB(_opaque, 194, 24, 91);
+  static final Color primary = Color.fromARGB(_opaque, 88, 153, 218);
+  static final Color secondary = Color.fromARGB(_opaque, 232, 116, 69);
+  static final Color tertiary = Color.fromARGB(_opaque, 25, 169, 121);
 }
 
 String _defaultLabelProvider(double v) => v.toStringAsFixed(1);
