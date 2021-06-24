@@ -2,7 +2,7 @@
 
 Provides a simple line chart.
 
-<img src="chart-example.png">
+<img src="https://github.com/greensopinion/flutter-simple-line-chart/blob/main/chart-example.png" width="50%">
 
 ## License
 
