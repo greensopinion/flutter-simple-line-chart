@@ -12,12 +12,31 @@ import 'style.dart';
 import 'x_axis.dart';
 import 'y_axis.dart';
 
+class LineChartController {
+  List<DataPoint> _selection = [];
+
+  List<DataPoint> get selection => _selection;
+  void onSelectionChanged() {}
+
+  void _selectionChanged(List<DataPoint> selection) {
+    this._selection = selection;
+    onSelectionChanged();
+  }
+}
+
 class LineChart extends StatelessWidget {
   final LineChartData data;
   final LineChartStyle style;
+  late final LineChartController controller;
 
-  const LineChart({Key? key, required this.style, required this.data})
-      : super(key: key);
+  LineChart(
+      {Key? key,
+      required this.style,
+      required this.data,
+      LineChartController? controller})
+      : super(key: key) {
+    this.controller = controller ?? LineChartController();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,6 +129,7 @@ class LineChart extends StatelessWidget {
           child: _ChartArea(
               data: data,
               style: style,
+              controller: controller,
               xLabeller: bottomAxisLabeller ?? topAxisLabeller!,
               yLabeller: leftAxisLabeller ?? rightAxisLabeller!)));
       children.add(Positioned(
@@ -136,6 +156,7 @@ class LineChart extends StatelessWidget {
 class _ChartArea extends StatefulWidget {
   final LineChartData data;
   final LineChartStyle style;
+  final LineChartController controller;
   final AxisLabeller xLabeller;
   final AxisLabeller yLabeller;
 
@@ -143,6 +164,7 @@ class _ChartArea extends StatefulWidget {
       {Key? key,
       required this.style,
       required this.data,
+      required this.controller,
       required this.xLabeller,
       required this.yLabeller})
       : super(key: key);
@@ -163,6 +185,7 @@ class _ChartAreaState extends State<_ChartArea> {
       return ChangeNotifierProvider(
         create: (context) {
           _selectionModel = SelectionModel(widget.style, widget.data, size);
+          _selectionModel?.addListener(_onSelectionChanged);
           return _selectionModel!;
         },
         builder: (context, child) => GestureDetector(
@@ -198,5 +221,9 @@ class _ChartAreaState extends State<_ChartArea> {
         oldWidget.yLabeller != widget.yLabeller) {
       setState(() {});
     }
+  }
+
+  void _onSelectionChanged() {
+    widget.controller._selectionChanged(_selectionModel!.selection);
   }
 }
