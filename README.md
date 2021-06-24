@@ -2,6 +2,7 @@
 
 Provides a simple line chart.
 
+<img src="chart-example.png">
 
 ## License
 
