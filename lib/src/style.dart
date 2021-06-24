@@ -92,6 +92,29 @@ class LineChartStyle {
         topAxisStyle: topAxisStyle ?? this.topAxisStyle,
         highlightStyle: highlightStyle ?? this.highlightStyle);
   }
+
+  @override
+  int get hashCode => hashValues(
+      legendStyle,
+      hashList(datasetStyles),
+      topAxisStyle,
+      bottomAxisStyle,
+      leftAxisStyle,
+      rightAxisStyle,
+      animationDuration,
+      highlightStyle);
+
+  @override
+  bool operator ==(Object other) =>
+      other is LineChartStyle &&
+      other.legendStyle == legendStyle &&
+      other.datasetStyles == datasetStyles &&
+      other.topAxisStyle == topAxisStyle &&
+      other.bottomAxisStyle == bottomAxisStyle &&
+      other.leftAxisStyle == leftAxisStyle &&
+      other.rightAxisStyle == rightAxisStyle &&
+      other.animationDuration == animationDuration &&
+      other.highlightStyle == highlightStyle;
 }
 
 typedef LabelFunction = String Function(DataPoint);
@@ -122,6 +145,34 @@ class AxisStyle {
       this.valueMargin});
 
   double get fontSize => textStyle.fontSize ?? defaultFontSize;
+
+  @override
+  int get hashCode => hashValues(
+      maxLabels,
+      labelProvider,
+      textStyle,
+      drawLabels,
+      labelInsets,
+      lineColor,
+      lineSize,
+      absoluteMin,
+      absoluteMax,
+      valueMargin);
+
+  @override
+  bool operator ==(Object other) =>
+      other is AxisStyle &&
+      other.maxLabels == maxLabels &&
+      other.labelProvider == labelProvider &&
+      other.textStyle == textStyle &&
+      other.drawLabels == drawLabels &&
+      other.labelInsets == labelInsets &&
+      other.lineColor == lineColor &&
+      other.lineSize == lineSize &&
+      other.absoluteMax == absoluteMax &&
+      other.absoluteMin == absoluteMin &&
+      other.valueMargin == valueMargin &&
+      other.textStyle == textStyle;
 
   AxisStyle copyWith(
       {int? maxLabels,
@@ -168,6 +219,17 @@ class LegendStyle {
         textStyle: textStyle ?? this.textStyle,
         insets: insets ?? this.insets);
   }
+
+  @override
+  int get hashCode => hashValues(lineColor, textStyle, insets, borderSize);
+
+  @override
+  bool operator ==(Object other) =>
+      other is LegendStyle &&
+      other.borderSize == borderSize &&
+      other.lineColor == lineColor &&
+      other.insets == insets &&
+      other.textStyle == textStyle;
 }
 
 class DatasetStyle {
@@ -194,6 +256,17 @@ class DatasetStyle {
         lineSize: lineSize ?? this.lineSize,
         cubicIntensity: cubicIntensity ?? this.cubicIntensity);
   }
+
+  @override
+  int get hashCode => hashValues(color, lineSize, fillOpacity, cubicIntensity);
+
+  @override
+  bool operator ==(Object other) =>
+      other is DatasetStyle &&
+      other.color == color &&
+      other.lineSize == lineSize &&
+      other.fillOpacity == fillOpacity &&
+      other.cubicIntensity == cubicIntensity;
 }
 
 class HighlightStyle {
@@ -216,6 +289,17 @@ class HighlightStyle {
         vertical: vertical ?? this.vertical,
         horizontal: horizontal ?? this.horizontal);
   }
+
+  @override
+  int get hashCode => hashValues(color, lineSize, vertical, horizontal);
+
+  @override
+  bool operator ==(Object other) =>
+      other is HighlightStyle &&
+      other.color == color &&
+      other.lineSize == lineSize &&
+      other.vertical == vertical &&
+      other.horizontal == horizontal;
 }
 
 List<Color> _defaultDatasetColors() =>

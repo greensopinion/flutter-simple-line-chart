@@ -10,6 +10,13 @@ class LineChartData {
   double get minY => datasets.map((e) => e.minY).reduce(min);
   double get maxX => datasets.map((e) => e.maxX).reduce(max);
   double get minX => datasets.map((e) => e.minX).reduce(min);
+
+  @override
+  int get hashCode => datasets.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      other is LineChartData && other.datasets == datasets;
 }
 
 class Dataset {
@@ -22,6 +29,15 @@ class Dataset {
   double get minY => dataPoints.map((e) => e.y).reduce(min);
   double get maxX => dataPoints.map((e) => e.x).reduce(max);
   double get minX => dataPoints.map((e) => e.x).reduce(min);
+
+  @override
+  int get hashCode => hashValues(label, dataPoints);
+
+  @override
+  bool operator ==(Object other) =>
+      other is Dataset &&
+      other.label == label &&
+      other.dataPoints == dataPoints;
 }
 
 class DataPoint {
@@ -32,4 +48,14 @@ class DataPoint {
   DataPoint({required this.x, required this.y, this.model});
 
   Offset toOffset() => Offset(x, y);
+
+  @override
+  int get hashCode => hashValues(x, y, model);
+
+  @override
+  bool operator ==(Object other) =>
+      other is DataPoint &&
+      other.x == x &&
+      other.y == y &&
+      other.model == model;
 }

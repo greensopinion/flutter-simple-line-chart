@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../simple_line_chart.dart';
 
 import 'selection_model.dart';
 

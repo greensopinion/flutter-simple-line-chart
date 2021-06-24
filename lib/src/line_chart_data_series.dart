@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'projection.dart';
 
 import 'line_chart_data.dart';
+import 'projection.dart';
 import 'style.dart';
 
 class LineChartDataSeries extends StatefulWidget {
@@ -13,41 +13,76 @@ class LineChartDataSeries extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _LineChartDataSeriesState(data, style);
+    return _LineChartDataSeriesState();
+  }
+}
+
+class ProjectionProvider {
+  final LineChartStyle style;
+  final LineChartData data;
+  Projection? _projection;
+
+  ProjectionProvider(this.style, this.data);
+
+  Projection projection(Size size) {
+    Projection? projection = this._projection;
+    if (projection == null || projection.size != size) {
+      projection = Projection(style, size, data);
+      this._projection = projection;
+    }
+    return projection;
+  }
+
+  void reset() {
+    _projection = null;
   }
 }
 
 class _LineChartDataSeriesState extends State<LineChartDataSeries>
     with SingleTickerProviderStateMixin {
-  final LineChartData data;
-  final LineChartStyle style;
-  late final _LineChartDataSeriesPainter painter;
   late final AnimationController _controller;
   late final Animation<double> _animation;
-
-  _LineChartDataSeriesState(this.data, this.style);
+  late ProjectionProvider _projectionProvider;
 
   @override
   void initState() {
     super.initState();
+    _projectionProvider = ProjectionProvider(widget.style, widget.data);
     _controller = AnimationController(
-        duration: style.animationDuration ?? Duration(seconds: 0), vsync: this);
+        duration: widget.style.animationDuration ?? Duration(seconds: 0),
+        vsync: this);
     final curve =
         CurvedAnimation(parent: _controller, curve: Curves.easeOutSine);
     _animation = Tween<double>(begin: 0, end: 1.0).animate(curve)
       ..addListener(() {
         setState(() {});
       });
-    painter = _LineChartDataSeriesPainter(data, style, _animation);
     _controller.forward();
   }
 
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-        key: Key('${widget.key}_LineChartDataSeriesState${_animation.value}'),
-        painter: painter,
+        key: Key(
+            '${widget.key}_LineChartDataSeriesState${_animation.value}_${widget.style.hashCode}'),
+        painter: _LineChartDataSeriesPainter(
+            widget.data, widget.style, _animation, _projectionProvider),
         willChange: !_animation.isCompleted);
+  }
+
+  @override
+  void didUpdateWidget(covariant LineChartDataSeries oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final dataChanged = oldWidget.data != widget.data;
+    if (dataChanged || oldWidget.style != widget.style) {
+      setState(() {
+        _projectionProvider = ProjectionProvider(widget.style, widget.data);
+        if (dataChanged) {
+          _controller.reset();
+          _controller.forward();
+        }
+      });
+    }
   }
 
   @override
@@ -61,15 +96,16 @@ class _LineChartDataSeriesPainter extends CustomPainter {
   final LineChartData data;
   final LineChartStyle style;
   final Animation<double> animation;
-  Projection? projection;
+  final ProjectionProvider _projectionProvider;
 
-  _LineChartDataSeriesPainter(this.data, this.style, this.animation);
+  _LineChartDataSeriesPainter(
+      this.data, this.style, this.animation, this._projectionProvider);
 
   @override
   void paint(Canvas canvas, Size size) {
     canvas.save();
     canvas.clipRect(Offset.zero & size);
-    Projection projection = _projection(size);
+    Projection projection = _projectionProvider.projection(size);
     data.datasets.asMap().forEach((index, dataset) {
       final datasetStyle = style.datasetStyleOfIndex(index);
       _paint(canvas, projection.yTransform(animation.value), datasetStyle,
@@ -80,7 +116,12 @@ class _LineChartDataSeriesPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return !animation.isCompleted;
+    final unChanged = oldDelegate is _LineChartDataSeriesPainter &&
+        oldDelegate.data == data &&
+        oldDelegate.style == style &&
+        oldDelegate.animation.value == animation.value;
+    print('unChanged; $unChanged');
+    return !unChanged;
   }
 
   void _paint(Canvas canvas, Projection projection, DatasetStyle datasetStyle,
@@ -138,13 +179,4 @@ class _LineChartDataSeriesPainter extends CustomPainter {
           required double intensity}) =>
       Offset(
           (right.dx - left.dx) * intensity, (right.dy - left.dy) * intensity);
-
-  Projection _projection(Size size) {
-    Projection? projection = this.projection;
-    if (projection == null || projection.size != size) {
-      projection = Projection(style, size, data);
-      this.projection = projection;
-    }
-    return projection;
-  }
 }
