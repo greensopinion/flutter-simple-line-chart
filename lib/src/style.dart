@@ -24,12 +24,14 @@ class LineChartStyle {
     assert(leftAxisStyle != null || rightAxisStyle != null);
   }
 
-  factory LineChartStyle.fromTheme(BuildContext context) {
+  factory LineChartStyle.fromTheme(BuildContext context,
+      {List<Color>? datasetColors}) {
     final theme = Theme.of(context);
     final textStyle = theme.textTheme.bodyText1 ?? theme.textTheme.bodyText2!;
     final lineColor = textStyle.color!.withOpacity(0.3);
-    final datasetStyles =
-        _defaultDatasetColors().map((c) => DatasetStyle(color: c)).toList();
+    final datasetStyles = (datasetColors ?? _defaultDatasetColors())
+        .map((c) => DatasetStyle(color: c))
+        .toList();
     final fontSize = textStyle.fontSize ?? LegendStyle.defaultFontSize;
     final legendInsets = EdgeInsets.only(top: fontSize);
 
@@ -65,6 +67,24 @@ class LineChartStyle {
     }
     return datasetStyles[index];
   }
+
+  LineChartStyle copyWith(
+      {LegendStyle? legendStyle,
+      List<DatasetStyle>? datasetStyles,
+      AxisStyle? topAxisStyle,
+      AxisStyle? bottomAxisStyle,
+      AxisStyle? leftAxisStyle,
+      AxisStyle? rightAxisStyle,
+      Duration? animationDuration}) {
+    return LineChartStyle(
+        legendStyle: legendStyle ?? this.legendStyle,
+        datasetStyles: datasetStyles ?? this.datasetStyles,
+        animationDuration: animationDuration ?? this.animationDuration,
+        bottomAxisStyle: bottomAxisStyle ?? this.bottomAxisStyle,
+        leftAxisStyle: leftAxisStyle ?? this.leftAxisStyle,
+        rightAxisStyle: rightAxisStyle ?? this.rightAxisStyle,
+        topAxisStyle: topAxisStyle ?? this.topAxisStyle);
+  }
 }
 
 typedef LabelFunction = String Function(DataPoint);
@@ -95,6 +115,30 @@ class AxisStyle {
       this.valueMargin});
 
   double get fontSize => textStyle.fontSize ?? defaultFontSize;
+
+  AxisStyle copyWith(
+      {int? maxLabels,
+      LabelFunction? labelProvider,
+      TextStyle? textStyle,
+      bool? drawLabels,
+      EdgeInsets? labelInsets,
+      Color? lineColor,
+      double? lineSize,
+      double? absoluteMin,
+      double? absoluteMax,
+      double? valueMargin}) {
+    return AxisStyle(
+        textStyle: textStyle ?? this.textStyle,
+        labelInsets: labelInsets ?? this.labelInsets,
+        labelProvider: labelProvider ?? this.labelProvider,
+        lineColor: lineColor ?? this.lineColor,
+        lineSize: lineSize ?? this.lineSize,
+        drawLabels: drawLabels ?? this.drawLabels,
+        maxLabels: maxLabels ?? this.maxLabels,
+        absoluteMin: absoluteMin ?? this.absoluteMin,
+        absoluteMax: absoluteMax ?? this.absoluteMax,
+        valueMargin: valueMargin ?? this.valueMargin);
+  }
 }
 
 class LegendStyle {
@@ -109,6 +153,14 @@ class LegendStyle {
 
   double get fontSize => textStyle.fontSize ?? defaultFontSize;
   double get height => fontSize + insets.top + insets.bottom + (borderSize * 2);
+
+  LegendStyle copyWith(
+      {Color? lineColor, TextStyle? textStyle, EdgeInsets? insets}) {
+    return LegendStyle(
+        lineColor: lineColor ?? this.lineColor,
+        textStyle: textStyle ?? this.textStyle,
+        insets: insets ?? this.insets);
+  }
 }
 
 class DatasetStyle {
@@ -123,6 +175,18 @@ class DatasetStyle {
       this.fillOpacity = 0.25,
       this.lineSize = defaultLineSize,
       this.cubicIntensity = 0.2});
+
+  DatasetStyle copyWith(
+      {Color? color,
+      double? fillOpacity,
+      double? lineSize,
+      double? cubicIntensity}) {
+    return DatasetStyle(
+        color: color ?? this.color,
+        fillOpacity: fillOpacity ?? this.fillOpacity,
+        lineSize: lineSize ?? this.lineSize,
+        cubicIntensity: cubicIntensity ?? this.cubicIntensity);
+  }
 }
 
 List<Color> _defaultDatasetColors() =>
