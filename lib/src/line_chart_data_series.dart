@@ -32,7 +32,9 @@ class _LineChartDataSeriesState extends State<LineChartDataSeries>
     super.initState();
     _controller = AnimationController(
         duration: style.animationDuration ?? Duration(seconds: 0), vsync: this);
-    _animation = Tween<double>(begin: 0, end: 1.0).animate(_controller)
+    final curve =
+        CurvedAnimation(parent: _controller, curve: Curves.easeOutSine);
+    _animation = Tween<double>(begin: 0, end: 1.0).animate(curve)
       ..addListener(() {
         setState(() {});
       });
