@@ -11,6 +11,7 @@ class LineChartStyle {
   final AxisStyle? leftAxisStyle;
   final AxisStyle? rightAxisStyle;
   final Duration? animationDuration;
+  late final HighlightStyle? highlightStyle;
 
   LineChartStyle(
       {required this.legendStyle,
@@ -19,6 +20,7 @@ class LineChartStyle {
       this.bottomAxisStyle,
       this.leftAxisStyle,
       this.rightAxisStyle,
+      this.highlightStyle,
       this.animationDuration = const Duration(seconds: 1)}) {
     assert(topAxisStyle != null || bottomAxisStyle != null);
     assert(leftAxisStyle != null || rightAxisStyle != null);
@@ -34,11 +36,14 @@ class LineChartStyle {
         .toList();
     final fontSize = textStyle.fontSize ?? LegendStyle.defaultFontSize;
     final legendInsets = EdgeInsets.only(top: fontSize);
+    final highlight =
+        HighlightStyle(color: _Colors.highlight, lineSize: _defaultLineSize);
 
     return LineChartStyle(
         legendStyle: LegendStyle(
             lineColor: lineColor, textStyle: textStyle, insets: legendInsets),
         datasetStyles: datasetStyles,
+        highlightStyle: highlight,
         topAxisStyle: AxisStyle(
             textStyle: textStyle,
             lineColor: lineColor,
@@ -75,7 +80,8 @@ class LineChartStyle {
       AxisStyle? bottomAxisStyle,
       AxisStyle? leftAxisStyle,
       AxisStyle? rightAxisStyle,
-      Duration? animationDuration}) {
+      Duration? animationDuration,
+      HighlightStyle? highlightStyle}) {
     return LineChartStyle(
         legendStyle: legendStyle ?? this.legendStyle,
         datasetStyles: datasetStyles ?? this.datasetStyles,
@@ -83,7 +89,8 @@ class LineChartStyle {
         bottomAxisStyle: bottomAxisStyle ?? this.bottomAxisStyle,
         leftAxisStyle: leftAxisStyle ?? this.leftAxisStyle,
         rightAxisStyle: rightAxisStyle ?? this.rightAxisStyle,
-        topAxisStyle: topAxisStyle ?? this.topAxisStyle);
+        topAxisStyle: topAxisStyle ?? this.topAxisStyle,
+        highlightStyle: highlightStyle ?? this.highlightStyle);
   }
 }
 
@@ -189,6 +196,28 @@ class DatasetStyle {
   }
 }
 
+class HighlightStyle {
+  final Color color;
+  final double lineSize;
+  final bool vertical;
+  final bool horizontal;
+
+  HighlightStyle(
+      {required this.color,
+      this.lineSize = _defaultLineSize,
+      this.vertical = true,
+      this.horizontal = true});
+
+  HighlightStyle copyWith(
+      {Color? color, double? lineSize, bool? vertical, bool? horizontal}) {
+    return HighlightStyle(
+        color: color ?? this.color,
+        lineSize: lineSize ?? this.lineSize,
+        vertical: vertical ?? this.vertical,
+        horizontal: horizontal ?? this.horizontal);
+  }
+}
+
 List<Color> _defaultDatasetColors() =>
     [_Colors.primary, _Colors.secondary, _Colors.tertiary];
 
@@ -197,6 +226,7 @@ class _Colors {
   static final Color primary = Color.fromARGB(_opaque, 88, 153, 218);
   static final Color secondary = Color.fromARGB(_opaque, 232, 116, 69);
   static final Color tertiary = Color.fromARGB(_opaque, 25, 169, 121);
+  static final Color highlight = Color.fromARGB(_opaque, 242, 155, 29);
 }
 
 String _defaultLabelProvider(double v) => v.toStringAsFixed(1);

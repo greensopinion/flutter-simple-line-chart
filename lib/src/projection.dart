@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'style.dart';
 import 'line_chart_data.dart';
+import 'extensions.dart';
 
 class Projection {
   final LineChartStyle style;
@@ -41,6 +42,14 @@ class Projection {
     return Offset(x, y);
   }
 
+  List<DataPoint> fromPixel({required Offset position}) {
+    final dataX = ((position.dx / size.width) * xRange) + minX;
+    return data.datasets
+        .map((dataset) => _closestByX(dataset, dataX))
+        .whereType<DataPoint>()
+        .toList();
+  }
+
   double _minY() {
     var min = data.minY;
     final valueMargin = _yValueMargin();
@@ -67,4 +76,17 @@ class Projection {
       style.leftAxisStyle?.valueMargin ?? style.rightAxisStyle?.valueMargin;
   double? _yValueAbsoluteMin() =>
       style.leftAxisStyle?.absoluteMin ?? style.rightAxisStyle?.absoluteMin;
+
+  DataPoint? _closestByX(Dataset dataset, double dataX) {
+    double? distance;
+    DataPoint? dataPoint;
+    dataset.dataPoints.forEach((candidate) {
+      final candidateDistance = candidate.x.difference(dataX);
+      if (distance == null || candidateDistance < distance!) {
+        distance = candidateDistance;
+        dataPoint = candidate;
+      }
+    });
+    return dataPoint;
+  }
 }

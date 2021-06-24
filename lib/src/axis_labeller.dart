@@ -2,9 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:simple_line_chart/simple_line_chart.dart';
 
 import 'line_chart_data.dart';
+import 'style.dart';
+import 'extensions.dart';
 
 enum AxisDimension { X, Y }
 
@@ -120,13 +121,4 @@ class _PainterPoint {
   final TextPainter painter;
 
   _PainterPoint(this.dataPoint, this.painter);
-}
-
-extension _DoubleExtension on double {
-  double difference(double other) {
-    if (other < 0 && this > 0 || other > 0 && this < 0) {
-      return (other.abs() + this.abs()).abs();
-    }
-    return (other.abs() - this.abs()).abs();
-  }
 }

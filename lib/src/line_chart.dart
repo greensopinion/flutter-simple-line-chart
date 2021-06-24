@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:simple_line_chart/src/line_chart_grid.dart';
+import 'package:simple_line_chart/src/selection_model.dart';
 import 'package:simple_line_chart/src/style.dart';
 import 'package:simple_line_chart/src/x_axis.dart';
 import 'package:simple_line_chart/src/y_axis.dart';
@@ -8,6 +10,7 @@ import '../simple_line_chart.dart';
 import 'axis_labeller.dart';
 import 'legend.dart';
 import 'line_chart_data_series.dart';
+import 'line_chart_selection.dart';
 
 class LineChart extends StatelessWidget {
   final LineChartData data;
@@ -130,7 +133,7 @@ class LineChart extends StatelessWidget {
   double _legendHeight() => style.legendStyle.height;
 }
 
-class _ChartArea extends StatelessWidget {
+class _ChartArea extends StatefulWidget {
   final LineChartData data;
   final LineChartStyle style;
   final AxisLabeller xLabeller;
@@ -145,19 +148,55 @@ class _ChartArea extends StatelessWidget {
       : super(key: key);
 
   @override
+  State<StatefulWidget> createState() {
+    return _ChartAreaState();
+  }
+}
+
+class _ChartAreaState extends State<_ChartArea> {
+  SelectionModel? _selectionModel;
+
+  @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      return Container(
-        width: constraints.maxWidth,
-        height: constraints.maxHeight,
-        child: Stack(fit: StackFit.expand, children: [
-          LineChartGrid(
-              style: (style.topAxisStyle ?? style.bottomAxisStyle)!,
-              xLabeller: xLabeller,
-              yLabeller: yLabeller),
-          LineChartDataSeries(style: style, data: data)
-        ]),
+      final size = Size(constraints.maxWidth, constraints.maxHeight);
+      return ChangeNotifierProvider(
+        create: (context) {
+          _selectionModel = SelectionModel(widget.style, widget.data, size);
+          return _selectionModel!;
+        },
+        builder: (context, child) => GestureDetector(
+            onTapUp: (details) =>
+                _selectionModel?.onTapUp(details.localPosition),
+            onHorizontalDragStart: (details) =>
+                _selectionModel?.onDrag(details.localPosition),
+            onHorizontalDragUpdate: (details) =>
+                _selectionModel?.onDrag(details.localPosition),
+            child: Container(
+              width: size.width,
+              height: size.height,
+              child: Stack(fit: StackFit.expand, children: [
+                LineChartGrid(
+                    style: (widget.style.topAxisStyle ??
+                        widget.style.bottomAxisStyle)!,
+                    xLabeller: widget.xLabeller,
+                    yLabeller: widget.yLabeller),
+                LineChartDataSeries(style: widget.style, data: widget.data),
+                LineChartSelection(),
+              ]),
+            )),
       );
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant _ChartArea oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.data != widget.data ||
+        oldWidget.style != widget.style ||
+        oldWidget.xLabeller != widget.xLabeller ||
+        oldWidget.yLabeller != widget.yLabeller) {
+      setState(() {});
+    }
   }
 }
