@@ -3,7 +3,7 @@
 Provides a simple line chart. An opinionated library that focuses on API simplicity.
 
 * Charts multiple datasets
-* Uses flutter components where text is presented so that system font sizes are adaptive
+* Uses flutter components where text is presented so that font sizes adapt to system preferences
 * Cubic bezier curves
 * Multiple axes
 * Legend
