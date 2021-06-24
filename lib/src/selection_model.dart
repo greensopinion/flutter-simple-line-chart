@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:simple_line_chart/simple_line_chart.dart';
 
+import '../simple_line_chart.dart';
 import 'line_chart_data.dart';
 import 'projection.dart';
 

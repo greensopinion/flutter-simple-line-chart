@@ -1,8 +1,8 @@
 import 'dart:ui';
 
-import 'style.dart';
-import 'line_chart_data.dart';
 import 'extensions.dart';
+import 'line_chart_data.dart';
+import 'style.dart';
 
 class Projection {
   final LineChartStyle style;

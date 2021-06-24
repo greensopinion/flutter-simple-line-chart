@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:simple_line_chart/src/axis_labeller.dart';
+import 'axis_labeller.dart';
 
 import 'line_chart_data.dart';
 import 'style.dart';

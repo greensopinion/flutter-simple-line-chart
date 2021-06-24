@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_line_chart/src/line_chart_grid.dart';
-import 'package:simple_line_chart/src/selection_model.dart';
-import 'package:simple_line_chart/src/style.dart';
-import 'package:simple_line_chart/src/x_axis.dart';
-import 'package:simple_line_chart/src/y_axis.dart';
 
 import '../simple_line_chart.dart';
 import 'axis_labeller.dart';
 import 'legend.dart';
 import 'line_chart_data_series.dart';
+import 'line_chart_grid.dart';
 import 'line_chart_selection.dart';
+import 'selection_model.dart';
+import 'style.dart';
+import 'x_axis.dart';
+import 'y_axis.dart';
 
 class LineChart extends StatelessWidget {
   final LineChartData data;

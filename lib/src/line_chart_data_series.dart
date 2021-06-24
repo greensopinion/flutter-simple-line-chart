@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:simple_line_chart/src/projection.dart';
+import 'projection.dart';
 
 import 'line_chart_data.dart';
 import 'style.dart';
