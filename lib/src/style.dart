@@ -93,6 +93,25 @@ class LineChartStyle {
         highlightStyle: highlightStyle ?? this.highlightStyle);
   }
 
+  /// Copies the style with the specified axes. Differs from [copyWith]
+  /// in that unxpecified or null axes are not present in the copy.
+  /// Useful for removing axes.
+  LineChartStyle copyWithAxes(
+      {AxisStyle? topAxisStyle,
+      AxisStyle? bottomAxisStyle,
+      AxisStyle? leftAxisStyle,
+      AxisStyle? rightAxisStyle}) {
+    return LineChartStyle(
+        legendStyle: legendStyle,
+        datasetStyles: datasetStyles,
+        animationDuration: animationDuration,
+        bottomAxisStyle: bottomAxisStyle,
+        leftAxisStyle: leftAxisStyle,
+        rightAxisStyle: rightAxisStyle,
+        topAxisStyle: topAxisStyle,
+        highlightStyle: highlightStyle);
+  }
+
   @override
   int get hashCode => hashValues(
       legendStyle,
