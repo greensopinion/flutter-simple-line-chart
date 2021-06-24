@@ -49,7 +49,7 @@ class _LineChartContentState extends State<LineChartContent> {
               height: 300,
               // add the chart
               child: LineChart(
-                  // chart is themed
+                  // chart is styled
                   style: LineChartStyle.fromTheme(context),
                   // chart has data
                   data: data)))
