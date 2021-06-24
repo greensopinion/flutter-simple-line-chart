@@ -9,10 +9,10 @@ class SelectionModel extends ChangeNotifier {
   final LineChartData data;
   final Size size;
   Projection? _projection;
-  List<DataPoint> _selection = [];
+  List<QualifiedDataPoint> _selection = [];
 
-  List<DataPoint> get selection => _selection;
-  set selection(List<DataPoint> newSelection) {
+  List<QualifiedDataPoint> get selection => _selection;
+  set selection(List<QualifiedDataPoint> newSelection) {
     _selection = newSelection;
     notifyListeners();
   }

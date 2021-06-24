@@ -29,8 +29,9 @@ class _SelectionPainter extends CustomPainter {
           ..strokeWidth = style.lineSize
           ..isAntiAlias = true
           ..style = PaintingStyle.stroke;
-        final point =
-            selectionModel.projection.toPixel(data: selected.toOffset());
+        final point = selectionModel.projection.toPixel(
+            axisDependency: selected.dataset.axisDependency,
+            data: selected.dataPoint.toOffset());
         canvas.drawLine(
             Offset(0, point.dy), Offset(size.width, point.dy), linePaint);
         canvas.drawLine(

@@ -6,10 +6,30 @@ class LineChartData {
 
   LineChartData({required this.datasets});
 
-  double get maxY => datasets.map((e) => e.maxY).reduce(max);
-  double get minY => datasets.map((e) => e.minY).reduce(min);
-  double get maxX => datasets.map((e) => e.maxX).reduce(max);
-  double get minX => datasets.map((e) => e.minX).reduce(min);
+  double maxY(YAxisDependency dependency) {
+    final values = datasetsOf(axisDependency: dependency).map((e) => e.maxY);
+    return values.isEmpty ? 0 : values.reduce(max);
+  }
+
+  double minY(YAxisDependency dependency) {
+    final values = datasetsOf(axisDependency: dependency).map((e) => e.minY);
+    return values.isEmpty ? 0 : values.reduce(min);
+  }
+
+  double maxX(YAxisDependency dependency) {
+    final values = datasetsOf(axisDependency: dependency).map((e) => e.maxX);
+    return values.isEmpty ? 0 : values.reduce(max);
+  }
+
+  double minX(YAxisDependency dependency) {
+    final values = datasetsOf(axisDependency: dependency).map((e) => e.minX);
+    return values.isEmpty ? 0 : values.reduce(min);
+  }
+
+  List<Dataset> datasetsOf({required YAxisDependency axisDependency}) =>
+      datasets
+          .where((dataset) => dataset.axisDependency == axisDependency)
+          .toList();
 
   @override
   int get hashCode => datasets.hashCode;
@@ -19,16 +39,26 @@ class LineChartData {
       other is LineChartData && other.datasets == datasets;
 }
 
+enum YAxisDependency { LEFT, RIGHT }
+
 class Dataset {
   final String label;
+  final YAxisDependency axisDependency;
   final List<DataPoint> dataPoints;
 
-  Dataset({required this.label, required this.dataPoints});
+  Dataset(
+      {required this.label,
+      this.axisDependency = YAxisDependency.LEFT,
+      required this.dataPoints});
 
-  double get maxY => dataPoints.map((e) => e.y).reduce(max);
-  double get minY => dataPoints.map((e) => e.y).reduce(min);
-  double get maxX => dataPoints.map((e) => e.x).reduce(max);
-  double get minX => dataPoints.map((e) => e.x).reduce(min);
+  double get maxY =>
+      dataPoints.isEmpty ? 0 : dataPoints.map((e) => e.y).reduce(max);
+  double get minY =>
+      dataPoints.isEmpty ? 0 : dataPoints.map((e) => e.y).reduce(min);
+  double get maxX =>
+      dataPoints.isEmpty ? 0 : dataPoints.map((e) => e.x).reduce(max);
+  double get minX =>
+      dataPoints.isEmpty ? 0 : dataPoints.map((e) => e.x).reduce(min);
 
   @override
   int get hashCode => hashValues(label, dataPoints);
@@ -58,4 +88,20 @@ class DataPoint {
       other.x == x &&
       other.y == y &&
       other.model == model;
+}
+
+class QualifiedDataPoint {
+  final Dataset dataset;
+  final DataPoint dataPoint;
+
+  QualifiedDataPoint(this.dataset, this.dataPoint);
+
+  @override
+  int get hashCode => dataPoint.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      other is QualifiedDataPoint &&
+      other.dataPoint == dataPoint &&
+      other.dataset == dataset;
 }

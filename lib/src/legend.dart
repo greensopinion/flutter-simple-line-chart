@@ -21,8 +21,7 @@ class Legend extends StatelessWidget {
               legendStyle: style.legendStyle,
               dataset: e.value);
           return Padding(
-              padding: EdgeInsets.only(left: e.key == 0 ? 0 : item.boxSize),
-              child: item);
+              padding: EdgeInsets.only(right: item.boxSize), child: item);
         }).toList()));
   }
 }

@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'extensions.dart';
@@ -9,73 +10,61 @@ class Projection {
   final Size size;
   final LineChartData data;
   late final double _yTransform;
-  late final double minX;
-  late final double minY;
-  late final double maxX;
-  late final double maxY;
-  late final double xRange;
-  late final double yRange;
+  late final _DatasetMetrics _leftMetrics;
+  late final _DatasetMetrics _rightMetrics;
 
   Projection(this.style, this.size, this.data) {
     _yTransform = 1.0;
-    minX = data.minX;
-    minY = _minY();
-    maxX = data.maxX;
-    maxY = _maxY();
-    xRange = maxX - minX;
-    yRange = maxY - minY;
+    final minX = _minX();
+    final maxX = _maxX();
+    _leftMetrics =
+        _DatasetMetrics(style, data, minX, maxX, YAxisDependency.LEFT);
+    _rightMetrics =
+        _DatasetMetrics(style, data, minX, maxX, YAxisDependency.RIGHT);
   }
 
-  Projection._(this.style, this.size, this.data, this.minX, this.minY,
-      this.maxX, this.maxY, this.xRange, this.yRange, this._yTransform);
+  Projection._(this.style, this.size, this.data, this._leftMetrics,
+      this._rightMetrics, this._yTransform);
 
   Projection yTransform(double transform) {
     assert(transform >= 0 && transform <= 1.0);
     return Projection._(
-        style, size, data, minX, minY, maxX, maxY, xRange, yRange, transform);
+        style, size, data, _leftMetrics, _rightMetrics, transform);
   }
 
-  Offset toPixel({required Offset data}) {
-    var y =
-        size.height - (((data.dy - minY) / yRange) * size.height) * _yTransform;
-    var x = ((data.dx - minX) / xRange) * size.width;
+  _DatasetMetrics _metrics(YAxisDependency axisDependency) =>
+      axisDependency == YAxisDependency.LEFT ? _leftMetrics : _rightMetrics;
+
+  Offset toPixel(
+      {required YAxisDependency axisDependency, required Offset data}) {
+    final metrics = _metrics(axisDependency);
+    var y = size.height -
+        (((data.dy - metrics.minY) / metrics.yRange) * size.height) *
+            _yTransform;
+    var x = ((data.dx - metrics.minX) / metrics.xRange) * size.width;
     return Offset(x, y);
   }
 
-  List<DataPoint> fromPixel({required Offset position}) {
-    final dataX = ((position.dx / size.width) * xRange) + minX;
+  List<QualifiedDataPoint> fromPixel({required Offset position}) {
+    return _fromPixel(
+            axisDependency: YAxisDependency.LEFT, position: position) +
+        _fromPixel(axisDependency: YAxisDependency.RIGHT, position: position);
+  }
+
+  List<QualifiedDataPoint> _fromPixel(
+      {required YAxisDependency axisDependency, required Offset position}) {
+    final metrics = _metrics(axisDependency);
+    final dataX = ((position.dx / size.width) * metrics.xRange) + metrics.minX;
     return data.datasets
-        .map((dataset) => _closestByX(dataset, dataX))
-        .whereType<DataPoint>()
+        .map((dataset) {
+          final point = _closestByX(dataset, dataX);
+          if (point != null) {
+            return QualifiedDataPoint(dataset, point);
+          }
+        })
+        .whereType<QualifiedDataPoint>()
         .toList();
   }
-
-  double _minY() {
-    var min = data.minY;
-    final valueMargin = _yValueMargin();
-    if (valueMargin != null) {
-      min -= valueMargin;
-    }
-    final valueAbsoluteMin = _yValueAbsoluteMin();
-    if (valueAbsoluteMin != null && min > valueAbsoluteMin) {
-      min = valueAbsoluteMin;
-    }
-    return min;
-  }
-
-  double _maxY() {
-    var max = data.maxY;
-    final valueMargin = _yValueMargin();
-    if (valueMargin != null) {
-      max += valueMargin;
-    }
-    return max;
-  }
-
-  double? _yValueMargin() =>
-      style.leftAxisStyle?.valueMargin ?? style.rightAxisStyle?.valueMargin;
-  double? _yValueAbsoluteMin() =>
-      style.leftAxisStyle?.absoluteMin ?? style.rightAxisStyle?.absoluteMin;
 
   DataPoint? _closestByX(Dataset dataset, double dataX) {
     double? distance;
@@ -89,4 +78,64 @@ class Projection {
     });
     return dataPoint;
   }
+
+  double _minX() {
+    final values = data.datasets.map((e) => e.minX);
+    return values.isEmpty ? 0 : values.reduce(min);
+  }
+
+  double _maxX() {
+    final values = data.datasets.map((e) => e.maxX);
+    return values.isEmpty ? 0 : values.reduce(max);
+  }
+}
+
+class _DatasetMetrics {
+  LineChartStyle style;
+  LineChartData data;
+  YAxisDependency axisDependency;
+  final double minX;
+  final double maxX;
+  late final double minY;
+  late final double maxY;
+  late final double xRange;
+  late final double yRange;
+
+  _DatasetMetrics(
+      this.style, this.data, this.minX, this.maxX, this.axisDependency) {
+    minY = _minY();
+    maxY = _maxY();
+    xRange = maxX - minX;
+    yRange = maxY - minY;
+  }
+
+  double _minY() {
+    var min = data.minY(axisDependency);
+    final valueMargin = _yValueMargin();
+    if (valueMargin != null) {
+      min -= valueMargin;
+    }
+    final valueAbsoluteMin = _yValueAbsoluteMin();
+    if (valueAbsoluteMin != null && min > valueAbsoluteMin) {
+      min = valueAbsoluteMin;
+    }
+    return min;
+  }
+
+  double _maxY() {
+    var max = data.maxY(axisDependency);
+    final valueMargin = _yValueMargin();
+    if (valueMargin != null) {
+      max += valueMargin;
+    }
+    return max;
+  }
+
+  double? _yValueMargin() => axisDependency == YAxisDependency.LEFT
+      ? style.leftAxisStyle?.valueMargin
+      : style.rightAxisStyle?.valueMargin;
+
+  double? _yValueAbsoluteMin() => axisDependency == YAxisDependency.LEFT
+      ? style.leftAxisStyle?.absoluteMin
+      : style.rightAxisStyle?.absoluteMin;
 }

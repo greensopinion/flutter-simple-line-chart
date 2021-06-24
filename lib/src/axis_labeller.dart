@@ -11,29 +11,28 @@ enum AxisDimension { X, Y }
 
 class AxisLabeller {
   final AxisStyle style;
-  final LineChartData data;
+  final List<Dataset> datasets;
   final AxisDimension axis;
   final double length;
   List<LabelPoint>? _labelPoints;
 
-  AxisLabeller(this.style, this.data, this.axis, this.length);
+  AxisLabeller(this.style, this.datasets, this.axis, this.length);
 
   double get fontSize => style.textStyle.fontSize ?? AxisStyle.defaultFontSize;
   double get spacing => fontSize;
   double get width => labelPoints().map((e) => e.width).reduce(max);
 
   List<LabelPoint> labelPoints() {
-    if (data.datasets.isEmpty || data.datasets.first.dataPoints.length < 2) {
+    if (datasets.isEmpty || datasets.first.dataPoints.length < 2) {
       return [];
     }
     if (_labelPoints == null) {
-      final labels = _labelPainter(data.datasets.first.dataPoints).toList();
+      final labels = _labelPainter(datasets.first.dataPoints).toList();
       final labelSize = labels.map((e) => _textSize(e)).reduce(max);
       final labelSizeWithSpacing = labelSize + spacing;
       final labelCount = min(style.maxLabels, length ~/ labelSizeWithSpacing);
       if (axis == AxisDimension.X) {
-        final interval =
-            (data.datasets.first.dataPoints.length / labelCount).ceil();
+        final interval = (datasets.first.dataPoints.length / labelCount).ceil();
         _labelPoints = labels
             .asMap()
             .entries
@@ -45,10 +44,10 @@ class AxisLabeller {
                 _centerX(e.value.dataPoint)))
             .toList();
       } else {
-        var minY = data.datasets
+        var minY = datasets
             .map((dataset) => dataset.dataPoints.map((p) => p.y).reduce(min))
             .reduce(min);
-        var maxY = data.datasets
+        var maxY = datasets
             .map((dataset) => dataset.dataPoints.map((p) => p.y).reduce(max))
             .reduce(max);
         if (style.valueMargin != null) {
@@ -90,8 +89,8 @@ class AxisLabeller {
     ..layout();
 
   double _centerX(DataPoint point) {
-    final first = data.datasets.first.dataPoints.first;
-    final last = data.datasets.first.dataPoints.last;
+    final first = datasets.first.dataPoints.first;
+    final last = datasets.first.dataPoints.last;
     final range = last.x.difference(first.x);
     final offset = first.x.difference(point.x);
     return offset / range * length;

@@ -13,12 +13,12 @@ import 'x_axis.dart';
 import 'y_axis.dart';
 
 class LineChartController {
-  List<DataPoint> _selection = [];
+  List<QualifiedDataPoint> _selection = [];
 
-  List<DataPoint> get selection => _selection;
+  List<QualifiedDataPoint> get selection => _selection;
   void onSelectionChanged() {}
 
-  void _selectionChanged(List<DataPoint> selection) {
+  void _selectionChanged(List<QualifiedDataPoint> selection) {
     this._selection = selection;
     onSelectionChanged();
   }
@@ -48,13 +48,20 @@ class LineChart extends StatelessWidget {
       final verticalAxisInset = topInset + bottomInset;
       var leftAxisWidth = 0.0;
       var rightAxisWidth = 0.0;
+      final leftDatasets =
+          data.datasetsOf(axisDependency: YAxisDependency.LEFT);
+      final rightDatasets =
+          data.datasetsOf(axisDependency: YAxisDependency.RIGHT);
       AxisLabeller? leftAxisLabeller = style.leftAxisStyle == null
           ? null
-          : AxisLabeller(style.leftAxisStyle!, data, AxisDimension.Y,
+          : AxisLabeller(style.leftAxisStyle!, leftDatasets, AxisDimension.Y,
               constraints.maxHeight - verticalAxisInset);
       AxisLabeller? rightAxisLabeller = style.rightAxisStyle == null
           ? null
-          : AxisLabeller(style.rightAxisStyle!, data, AxisDimension.Y,
+          : AxisLabeller(
+              style.rightAxisStyle!,
+              rightDatasets.isEmpty ? leftDatasets : rightDatasets,
+              AxisDimension.Y,
               constraints.maxHeight - verticalAxisInset);
       if (leftAxisLabeller != null) {
         leftAxisWidth = leftAxisLabeller.width +
@@ -90,12 +97,12 @@ class LineChart extends StatelessWidget {
       }
       AxisLabeller? topAxisLabeller = style.topAxisStyle == null
           ? null
-          : AxisLabeller(style.topAxisStyle!, data, AxisDimension.X,
+          : AxisLabeller(style.topAxisStyle!, data.datasets, AxisDimension.X,
               constraints.maxWidth - leftAxisWidth - rightAxisWidth);
 
       AxisLabeller? bottomAxisLabeller = style.bottomAxisStyle == null
           ? null
-          : AxisLabeller(style.bottomAxisStyle!, data, AxisDimension.X,
+          : AxisLabeller(style.bottomAxisStyle!, data.datasets, AxisDimension.X,
               constraints.maxWidth - leftAxisWidth - rightAxisWidth);
       if (topAxisLabeller != null) {
         children.add(Positioned(

@@ -135,7 +135,8 @@ class _LineChartDataSeriesPainter extends CustomPainter {
     Path path = Path();
     final points = dataset.dataPoints
         .map((e) => e.toOffset())
-        .map((e) => projection.toPixel(data: e))
+        .map((e) =>
+            projection.toPixel(axisDependency: dataset.axisDependency, data: e))
         .toList();
     final intensity = datasetStyle.cubicIntensity;
     for (var index = 0; index < points.length; ++index) {
@@ -157,9 +158,14 @@ class _LineChartDataSeriesPainter extends CustomPainter {
     }
     canvas.drawPath(path, linePaint);
 
-    final last = projection.toPixel(data: dataset.dataPoints.last.toOffset());
-    final first = projection.toPixel(data: dataset.dataPoints.first.toOffset());
-    final fillLine = projection.toPixel(data: Offset(0, 0));
+    final last = projection.toPixel(
+        axisDependency: dataset.axisDependency,
+        data: dataset.dataPoints.last.toOffset());
+    final first = projection.toPixel(
+        axisDependency: dataset.axisDependency,
+        data: dataset.dataPoints.first.toOffset());
+    final fillLine = projection.toPixel(
+        axisDependency: dataset.axisDependency, data: Offset(0, 0));
     path.lineTo(last.dx, fillLine.dy);
     path.lineTo(first.dx, fillLine.dy);
     path.close();
