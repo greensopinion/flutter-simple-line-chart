@@ -7,6 +7,7 @@ Provides a simple line chart. An opinionated library that focuses on API simplic
 * Cubic bezier curves
 * Multiple axes
 * Legend
+* Highlighting
 
 <img src="https://github.com/greensopinion/flutter-simple-line-chart/blob/main/chart-example.png" width="50%">
 
