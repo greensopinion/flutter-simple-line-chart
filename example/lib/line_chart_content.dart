@@ -17,6 +17,7 @@ class _LineChartContentState extends State<LineChartContent> {
   void initState() {
     super.initState();
 
+    // create a data model
     data = LineChartData(datasets: [
       Dataset(
           label: 'First', dataPoints: _createDataPoints(offsetInDegrees: 90)),
@@ -34,12 +35,18 @@ class _LineChartContentState extends State<LineChartContent> {
           padding: EdgeInsets.only(top: 20),
           child: SizedBox(
               height: 300,
+              // add the chart
               child: LineChart(
-                  style: LineChartStyle.fromTheme(context), data: data)))
+                  // chart is themed
+                  style: LineChartStyle.fromTheme(context),
+                  // chart has data
+                  data: data)))
     ]);
   }
 }
 
+// data points are created on a sine curve here,
+// but you can plot any data you like
 List<DataPoint> _createDataPoints({required int offsetInDegrees}) {
   List<DataPoint> dataPoints = [];
   final degreesToRadians = (pi / 180);
