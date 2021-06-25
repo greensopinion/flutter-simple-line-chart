@@ -110,32 +110,32 @@ class _DatasetMetrics {
   }
 
   double _minY() {
+    final absoluteMin = _axisStyle?.absoluteMin;
+    if (absoluteMin != null) {
+      return absoluteMin;
+    }
     var min = data.minY(axisDependency);
-    final valueMargin = _yValueMargin();
+    final valueMargin = _axisStyle?.valueMargin;
     if (valueMargin != null) {
       min -= valueMargin;
-    }
-    final valueAbsoluteMin = _yValueAbsoluteMin();
-    if (valueAbsoluteMin != null && min > valueAbsoluteMin) {
-      min = valueAbsoluteMin;
     }
     return min;
   }
 
   double _maxY() {
+    final absoluteMax = _axisStyle?.absoluteMax;
+    if (absoluteMax != null) {
+      return absoluteMax;
+    }
     var max = data.maxY(axisDependency);
-    final valueMargin = _yValueMargin();
+    final valueMargin = _axisStyle?.valueMargin;
     if (valueMargin != null) {
       max += valueMargin;
     }
     return max;
   }
 
-  double? _yValueMargin() => axisDependency == YAxisDependency.LEFT
-      ? style.leftAxisStyle?.valueMargin
-      : style.rightAxisStyle?.valueMargin;
-
-  double? _yValueAbsoluteMin() => axisDependency == YAxisDependency.LEFT
-      ? style.leftAxisStyle?.absoluteMin
-      : style.rightAxisStyle?.absoluteMin;
+  AxisStyle? get _axisStyle => axisDependency == YAxisDependency.LEFT
+      ? style.leftAxisStyle
+      : style.rightAxisStyle;
 }
