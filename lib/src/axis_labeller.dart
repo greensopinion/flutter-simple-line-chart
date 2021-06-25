@@ -50,9 +50,11 @@ class AxisLabeller {
         var maxY = datasets
             .map((dataset) => dataset.dataPoints.map((p) => p.y).reduce(max))
             .reduce(max);
-        if (style.valueMargin != null) {
-          minY -= style.valueMargin!;
-          maxY += style.valueMargin!;
+        if (style.marginAbove != null) {
+          maxY += style.marginAbove!;
+        }
+        if (style.marginBelow != null) {
+          minY -= style.marginBelow!;
         }
         if (style.absoluteMin != null) {
           minY = style.absoluteMin!;

@@ -115,7 +115,7 @@ class _DatasetMetrics {
       return absoluteMin;
     }
     var min = data.minY(axisDependency);
-    final valueMargin = _axisStyle?.valueMargin;
+    final valueMargin = _axisStyle?.marginBelow;
     if (valueMargin != null) {
       min -= valueMargin;
     }
@@ -128,7 +128,7 @@ class _DatasetMetrics {
       return absoluteMax;
     }
     var max = data.maxY(axisDependency);
-    final valueMargin = _axisStyle?.valueMargin;
+    final valueMargin = _axisStyle?.marginAbove;
     if (valueMargin != null) {
       max += valueMargin;
     }
