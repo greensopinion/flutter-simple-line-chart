@@ -32,10 +32,14 @@ class _SelectionPainter extends CustomPainter {
         final point = selectionModel.projection.toPixel(
             axisDependency: selected.dataset.axisDependency,
             data: selected.dataPoint.toOffset());
-        canvas.drawLine(
-            Offset(0, point.dy), Offset(size.width, point.dy), linePaint);
-        canvas.drawLine(
-            Offset(point.dx, 0), Offset(point.dx, size.height), linePaint);
+        if (style.horizontal) {
+          canvas.drawLine(
+              Offset(0, point.dy), Offset(size.width, point.dy), linePaint);
+        }
+        if (style.vertical) {
+          canvas.drawLine(
+              Offset(point.dx, 0), Offset(point.dx, size.height), linePaint);
+        }
       });
     }
   }
