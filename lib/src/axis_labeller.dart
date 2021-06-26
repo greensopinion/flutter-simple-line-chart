@@ -7,6 +7,7 @@ import 'package:simple_line_chart/src/projection.dart';
 import 'line_chart_data.dart';
 import 'style.dart';
 import 'text_painter.dart';
+import 'extensions.dart';
 
 enum AxisDimension { X, Y }
 
@@ -54,28 +55,33 @@ class AxisLabeller {
       if (labelCount == 0) {
         _labelPoints = [];
       } else if (axis == AxisDimension.X) {
-        final interval = (datasets.first.dataPoints.length / labelCount).ceil();
-        _labelPoints = labels
-            .asMap()
-            .entries
-            .where((e) => (e.key % interval) == 0)
-            .map((e) => LabelPoint(
-                axisStyle.labelProvider(e.value.dataPoint),
-                e.value.painter.width + _textWidthCorrection,
-                e.value.painter.width + _textWidthCorrection,
-                e.value.painter.height,
-                projection
-                    .toPixel(
-                        axisDependency: datasets.first.axisDependency,
-                        data: e.value.dataPoint.toOffset())
-                    .dx))
-            .toList();
+        double minX = data.datasets.minX();
+        double maxX = data.datasets.maxX();
+        double range = minX.difference(maxX);
+        final interval = (range / labelCount);
+        _labelPoints = <LabelPoint>[];
+        if (interval > 0) {
+          for (var labelX = minX; labelX <= maxX; labelX += interval) {
+            final text = axisStyle.labelProvider(DataPoint(x: labelX, y: 0));
+            final painter = _createPainter(text);
+
+            final center = projection.toPixel(
+                axisDependency: datasets.first.axisDependency,
+                data: Offset(labelX, 0));
+            _labelPoints!.add(LabelPoint(
+                text,
+                painter.width + _textWidthCorrection,
+                painter.width + _textWidthCorrection,
+                painter.height,
+                center.dx));
+          }
+        }
       } else {
         final metrics = axisDependency == YAxisDependency.LEFT
             ? projection.leftMetrics()
             : projection.rightMetrics();
 
-        final interval = (metrics.rangeY / labelCount).ceil();
+        final interval = (metrics.rangeY / labelCount);
         _labelPoints = <LabelPoint>[];
         if (interval > 0) {
           for (var labelY = metrics.minY;

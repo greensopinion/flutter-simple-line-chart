@@ -6,25 +6,17 @@ class LineChartData {
 
   LineChartData({required this.datasets});
 
-  double maxY(YAxisDependency dependency) {
-    final values = datasetsOf(axisDependency: dependency).map((e) => e.maxY);
-    return values.isEmpty ? 0 : values.reduce(max);
-  }
+  double maxY(YAxisDependency dependency) =>
+      datasetsOf(axisDependency: dependency).maxY();
 
-  double minY(YAxisDependency dependency) {
-    final values = datasetsOf(axisDependency: dependency).map((e) => e.minY);
-    return values.isEmpty ? 0 : values.reduce(min);
-  }
+  double minY(YAxisDependency dependency) =>
+      datasetsOf(axisDependency: dependency).minY();
 
-  double maxX(YAxisDependency dependency) {
-    final values = datasetsOf(axisDependency: dependency).map((e) => e.maxX);
-    return values.isEmpty ? 0 : values.reduce(max);
-  }
+  double maxX(YAxisDependency dependency) =>
+      datasetsOf(axisDependency: dependency).maxX();
 
-  double minX(YAxisDependency dependency) {
-    final values = datasetsOf(axisDependency: dependency).map((e) => e.minX);
-    return values.isEmpty ? 0 : values.reduce(min);
-  }
+  double minX(YAxisDependency dependency) =>
+      datasetsOf(axisDependency: dependency).minX();
 
   List<Dataset> datasetsOf({required YAxisDependency axisDependency}) =>
       datasets
@@ -37,6 +29,28 @@ class LineChartData {
   @override
   bool operator ==(Object other) =>
       other is LineChartData && other.datasets == datasets;
+}
+
+extension DatasetListExtension on List<Dataset> {
+  double maxX() {
+    final values = map((e) => e.maxX);
+    return values.isEmpty ? 0 : values.reduce(max);
+  }
+
+  double minX() {
+    final values = map((e) => e.minX);
+    return values.isEmpty ? 0 : values.reduce(min);
+  }
+
+  double maxY() {
+    final values = map((e) => e.maxY);
+    return values.isEmpty ? 0 : values.reduce(max);
+  }
+
+  double minY() {
+    final values = map((e) => e.minY);
+    return values.isEmpty ? 0 : values.reduce(min);
+  }
 }
 
 enum YAxisDependency { LEFT, RIGHT }
