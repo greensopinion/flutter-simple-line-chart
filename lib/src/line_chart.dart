@@ -44,20 +44,26 @@ class LineChartController {
 class LineChart extends StatelessWidget {
   final LineChartData data;
   final LineChartStyle style;
+  final EdgeInsets padding;
   late final LineChartController controller;
 
   LineChart(
       {Key? key,
       required this.style,
       required this.data,
+      EdgeInsets? padding = const EdgeInsets.only(left: 10, right: 10),
       LineChartController? controller})
-      : super(key: key) {
+      : this.padding = padding ?? EdgeInsets.zero,
+        super(key: key) {
     this.controller = controller ?? LineChartController();
   }
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
+      final frame = BoxConstraints(
+          maxHeight: constraints.maxHeight - padding.top - padding.bottom,
+          maxWidth: constraints.maxWidth - padding.left - padding.right);
       final children = <Widget>[];
 
       final legendHeight = _estimateLegendHeight(constraints.maxWidth);
@@ -74,7 +80,7 @@ class LineChart extends StatelessWidget {
       AxisLabeller? leftAxisLabeller = style.leftAxisStyle == null
           ? null
           : AxisLabeller(style, style.leftAxisStyle!, data, leftDatasets,
-              AxisDimension.Y, constraints.maxHeight - verticalAxisInset);
+              AxisDimension.Y, frame.maxHeight - verticalAxisInset);
       AxisLabeller? rightAxisLabeller = style.rightAxisStyle == null
           ? null
           : AxisLabeller(
@@ -83,7 +89,7 @@ class LineChart extends StatelessWidget {
               data,
               rightDatasets.isEmpty ? leftDatasets : rightDatasets,
               AxisDimension.Y,
-              constraints.maxHeight - verticalAxisInset);
+              frame.maxHeight - verticalAxisInset);
       if (leftAxisLabeller != null) {
         leftAxisWidth = leftAxisLabeller.width +
             leftAxisLabeller.axisStyle.labelInsets.left +
@@ -96,29 +102,19 @@ class LineChart extends StatelessWidget {
       }
       AxisLabeller? topAxisLabeller = style.topAxisStyle == null
           ? null
-          : AxisLabeller(
-              style,
-              style.topAxisStyle!,
-              data,
-              data.datasets,
-              AxisDimension.X,
-              constraints.maxWidth - leftAxisWidth - rightAxisWidth);
+          : AxisLabeller(style, style.topAxisStyle!, data, data.datasets,
+              AxisDimension.X, frame.maxWidth - leftAxisWidth - rightAxisWidth);
 
       AxisLabeller? bottomAxisLabeller = style.bottomAxisStyle == null
           ? null
-          : AxisLabeller(
-              style,
-              style.bottomAxisStyle!,
-              data,
-              data.datasets,
-              AxisDimension.X,
-              constraints.maxWidth - leftAxisWidth - rightAxisWidth);
+          : AxisLabeller(style, style.bottomAxisStyle!, data, data.datasets,
+              AxisDimension.X, frame.maxWidth - leftAxisWidth - rightAxisWidth);
       if (leftAxisLabeller != null) {
         children.add(Positioned(
             left: 0,
             top: 0,
             width: leftAxisWidth,
-            height: constraints.maxHeight,
+            height: frame.maxHeight - bottomInset,
             child: YAxis(
                 style: leftAxisLabeller.axisStyle,
                 labeller: leftAxisLabeller,
@@ -128,10 +124,10 @@ class LineChart extends StatelessWidget {
       }
       if (rightAxisLabeller != null) {
         children.add(Positioned(
-            left: constraints.maxWidth - rightAxisWidth,
+            left: frame.maxWidth - rightAxisWidth,
             top: 0,
             width: rightAxisWidth,
-            height: constraints.maxHeight,
+            height: frame.maxHeight - bottomInset,
             child: YAxis(
                 style: rightAxisLabeller.axisStyle,
                 labeller: rightAxisLabeller,
@@ -143,7 +139,7 @@ class LineChart extends StatelessWidget {
         children.add(Positioned(
             left: 0,
             top: 0,
-            width: constraints.maxWidth,
+            width: frame.maxWidth,
             height: topInset,
             child: XAxis(
                 style: topAxisLabeller.axisStyle,
@@ -154,8 +150,8 @@ class LineChart extends StatelessWidget {
       if (bottomAxisLabeller != null) {
         children.add(Positioned(
             left: 0,
-            top: constraints.maxHeight - bottomInset,
-            width: constraints.maxWidth,
+            top: frame.maxHeight - bottomInset,
+            width: frame.maxWidth,
             height: topInset,
             child: XAxis(
                 style: bottomAxisLabeller.axisStyle,
@@ -166,8 +162,8 @@ class LineChart extends StatelessWidget {
       children.add(Positioned(
           left: leftAxisWidth,
           top: topInset,
-          width: constraints.maxWidth - leftAxisWidth - rightAxisWidth,
-          height: constraints.maxHeight - topInset - bottomInset,
+          width: frame.maxWidth - leftAxisWidth - rightAxisWidth,
+          height: frame.maxHeight - topInset - bottomInset,
           child: _ChartArea(
               data: data,
               style: style,
@@ -177,15 +173,22 @@ class LineChart extends StatelessWidget {
       if (style.legendStyle != null) {
         children.add(Positioned(
             left: leftAxisWidth,
-            top: constraints.maxHeight - legendHeight,
-            width: constraints.maxWidth - leftAxisWidth - rightAxisWidth,
+            top: frame.maxHeight - legendHeight,
+            width: frame.maxWidth - leftAxisWidth - rightAxisWidth,
             height: legendHeight,
             child: Legend(style: style, data: data)));
       }
       return Container(
         width: constraints.maxWidth,
         height: constraints.maxHeight,
-        child: Stack(children: children),
+        child: Stack(clipBehavior: Clip.none, children: [
+          Positioned(
+              left: padding.left,
+              top: padding.top,
+              width: frame.maxWidth,
+              height: frame.maxHeight,
+              child: Stack(clipBehavior: Clip.none, children: children))
+        ]),
       );
     });
   }

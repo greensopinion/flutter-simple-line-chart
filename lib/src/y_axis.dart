@@ -43,7 +43,7 @@ class YAxis extends StatelessWidget {
       return Container(
         width: constraints.maxWidth,
         height: double.infinity,
-        child: Stack(children: children),
+        child: Stack(clipBehavior: Clip.none, children: children),
       );
     });
   }

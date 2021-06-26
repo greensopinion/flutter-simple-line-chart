@@ -36,7 +36,7 @@ class XAxis extends StatelessWidget {
     return Container(
       width: labeller.length,
       height: labeller.labelHeight,
-      child: Stack(children: children),
+      child: Stack(clipBehavior: Clip.none, children: children),
     );
   }
 }

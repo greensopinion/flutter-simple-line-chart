@@ -107,8 +107,8 @@ class _DatasetMetrics {
 
   _DatasetMetrics(
       this.style, this.data, this.minX, this.maxX, this.axisDependency) {
-    _minY = _dataMinY();
-    _maxY = _dataMaxY();
+    _minY = _dataMinY().floorToDouble();
+    _maxY = _dataMaxY().ceilToDouble();
     xRange = maxX - minX;
     _yRange = _maxY - _minY;
     _applyMinimumRange();
@@ -162,7 +162,7 @@ class _DatasetMetrics {
       if (absoluteMax != null && _maxY > absoluteMax) {
         _maxY = absoluteMax;
       }
-      _yRange = maxY - minY;
+      _yRange = maxY.difference(minY);
     }
   }
 }
