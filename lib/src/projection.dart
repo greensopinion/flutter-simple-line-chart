@@ -32,6 +32,12 @@ class Projection {
         style, size, data, _leftMetrics, _rightMetrics, transform);
   }
 
+  ProjectionDatasetMetrics leftMetrics() =>
+      _leftMetrics.toProjectionDatasetMetrics();
+
+  ProjectionDatasetMetrics rightMetrics() =>
+      _rightMetrics.toProjectionDatasetMetrics();
+
   _DatasetMetrics _metrics(YAxisDependency axisDependency) =>
       axisDependency == YAxisDependency.LEFT ? _leftMetrics : _rightMetrics;
 
@@ -88,6 +94,14 @@ class Projection {
     final values = data.datasets.map((e) => e.maxX);
     return values.isEmpty ? 0 : values.reduce(max);
   }
+}
+
+class ProjectionDatasetMetrics {
+  final double minY;
+  final double maxY;
+  final double rangeY;
+
+  ProjectionDatasetMetrics._(this.minY, this.maxY, this.rangeY);
 }
 
 class _DatasetMetrics {
@@ -165,4 +179,7 @@ class _DatasetMetrics {
       _yRange = maxY.difference(minY);
     }
   }
+
+  ProjectionDatasetMetrics toProjectionDatasetMetrics() =>
+      ProjectionDatasetMetrics._(minY, maxY, yRange);
 }

@@ -6,7 +6,6 @@ import 'package:simple_line_chart/src/projection.dart';
 
 import 'line_chart_data.dart';
 import 'style.dart';
-import 'extensions.dart';
 import 'text_painter.dart';
 
 enum AxisDimension { X, Y }
@@ -15,13 +14,15 @@ class AxisLabeller {
   final LineChartStyle style;
   final AxisStyle axisStyle;
   final LineChartData data;
-  final List<Dataset> datasets;
+  late final YAxisDependency axisDependency;
   final AxisDimension axis;
   final double length;
   List<LabelPoint>? _labelPoints;
 
-  AxisLabeller(this.style, this.axisStyle, this.data, this.datasets, this.axis,
-      this.length);
+  AxisLabeller(this.style, this.axisStyle, this.data,
+      YAxisDependency? axisDependency, this.axis, this.length) {
+    this.axisDependency = axisDependency ?? YAxisDependency.LEFT;
+  }
 
   double get fontSize =>
       axisStyle.textStyle.fontSize ?? AxisStyle.defaultFontSize;
@@ -33,6 +34,12 @@ class AxisLabeller {
       : labelPoints().map((e) => e.height).reduce(max);
 
   List<LabelPoint> labelPoints() {
+    var axisDependency = this.axisDependency;
+    var datasets = data.datasetsOf(axisDependency: axisDependency);
+    if (datasets.isEmpty) {
+      axisDependency = YAxisDependency.LEFT;
+      datasets = data.datasetsOf(axisDependency: axisDependency);
+    }
     if (datasets.isEmpty || datasets.first.dataPoints.length < 2) {
       return [];
     }
@@ -64,30 +71,15 @@ class AxisLabeller {
                     .dx))
             .toList();
       } else {
-        var minY = datasets
-            .map((dataset) => dataset.dataPoints.map((p) => p.y).reduce(min))
-            .reduce(min);
-        var maxY = datasets
-            .map((dataset) => dataset.dataPoints.map((p) => p.y).reduce(max))
-            .reduce(max);
-        if (axisStyle.marginAbove != null) {
-          maxY += axisStyle.marginAbove!;
-        }
-        if (axisStyle.marginBelow != null) {
-          minY -= axisStyle.marginBelow!;
-        }
-        if (axisStyle.absoluteMin != null) {
-          minY = axisStyle.absoluteMin!;
-        }
-        if (axisStyle.absoluteMax != null) {
-          maxY = axisStyle.absoluteMax!;
-        }
-        minY = minY.floor().toDouble();
-        maxY = maxY.ceil().toDouble();
-        final interval = (minY.difference(maxY) / labelCount).ceil();
+        final metrics = axisDependency == YAxisDependency.LEFT
+            ? projection.leftMetrics()
+            : projection.rightMetrics();
+        final interval = (metrics.rangeY / labelCount).ceil();
         _labelPoints = <LabelPoint>[];
         if (interval > 0) {
-          for (var labelY = minY; labelY <= maxY; labelY += interval) {
+          for (var labelY = metrics.minY;
+              labelY <= metrics.maxY;
+              labelY += interval) {
             final text = axisStyle.labelProvider(DataPoint(x: 0, y: labelY));
             final painter = _createPainter(text);
 

@@ -72,23 +72,24 @@ class LineChart extends StatelessWidget {
 
       var leftAxisWidth = 0.0;
       var rightAxisWidth = 0.0;
-      final leftDatasets =
-          data.datasetsOf(axisDependency: YAxisDependency.LEFT);
-      final rightDatasets =
-          data.datasetsOf(axisDependency: YAxisDependency.RIGHT);
       final topInset = _xAxisHeight(style.topAxisStyle);
       final verticalAxisInset = topInset + bottomInset;
       AxisLabeller? leftAxisLabeller = style.leftAxisStyle == null
           ? null
-          : AxisLabeller(style, style.leftAxisStyle!, data, leftDatasets,
-              AxisDimension.Y, frame.maxHeight - verticalAxisInset);
+          : AxisLabeller(
+              style,
+              style.leftAxisStyle!,
+              data,
+              YAxisDependency.LEFT,
+              AxisDimension.Y,
+              frame.maxHeight - verticalAxisInset);
       AxisLabeller? rightAxisLabeller = style.rightAxisStyle == null
           ? null
           : AxisLabeller(
               style,
               style.rightAxisStyle!,
               data,
-              rightDatasets.isEmpty ? leftDatasets : rightDatasets,
+              YAxisDependency.RIGHT,
               AxisDimension.Y,
               frame.maxHeight - verticalAxisInset);
       if (leftAxisLabeller != null) {
@@ -103,12 +104,12 @@ class LineChart extends StatelessWidget {
       }
       AxisLabeller? topAxisLabeller = style.topAxisStyle == null
           ? null
-          : AxisLabeller(style, style.topAxisStyle!, data, data.datasets,
+          : AxisLabeller(style, style.topAxisStyle!, data, null,
               AxisDimension.X, frame.maxWidth - leftAxisWidth - rightAxisWidth);
 
       AxisLabeller? bottomAxisLabeller = style.bottomAxisStyle == null
           ? null
-          : AxisLabeller(style, style.bottomAxisStyle!, data, data.datasets,
+          : AxisLabeller(style, style.bottomAxisStyle!, data, null,
               AxisDimension.X, frame.maxWidth - leftAxisWidth - rightAxisWidth);
       if (leftAxisLabeller != null) {
         children.add(Positioned(
