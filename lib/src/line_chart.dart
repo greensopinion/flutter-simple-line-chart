@@ -66,7 +66,7 @@ class LineChart extends StatelessWidget {
           maxWidth: constraints.maxWidth - padding.left - padding.right);
       final children = <Widget>[];
 
-      final legendHeight = _estimateLegendHeight(constraints.maxWidth);
+      final legendHeight = _estimateLegendHeight(frame.maxWidth);
       final bottomInset = _xAxisHeight(style.bottomAxisStyle) + legendHeight;
 
       var leftAxisWidth = 0.0;

@@ -86,15 +86,17 @@ class AxisLabeller {
         maxY = maxY.ceil().toDouble();
         final interval = (minY.difference(maxY) / labelCount).ceil();
         _labelPoints = <LabelPoint>[];
-        for (var labelY = minY; labelY <= maxY; labelY += interval) {
-          final text = axisStyle.labelProvider(DataPoint(x: 0, y: labelY));
-          final painter = _createPainter(text);
+        if (interval > 0) {
+          for (var labelY = minY; labelY <= maxY; labelY += interval) {
+            final text = axisStyle.labelProvider(DataPoint(x: 0, y: labelY));
+            final painter = _createPainter(text);
 
-          final center = projection.toPixel(
-              axisDependency: datasets.first.axisDependency,
-              data: Offset(0, labelY));
-          _labelPoints!.add(LabelPoint(
-              text, painter.height, painter.width, painter.height, center.dy));
+            final center = projection.toPixel(
+                axisDependency: datasets.first.axisDependency,
+                data: Offset(0, labelY));
+            _labelPoints!.add(LabelPoint(text, painter.height, painter.width,
+                painter.height, center.dy));
+          }
         }
       }
     }
