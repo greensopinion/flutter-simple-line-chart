@@ -154,6 +154,9 @@ typedef LabelFunction = String Function(DataPoint);
 class AxisStyle {
   static final double defaultFontSize = _defaultFontSize;
   final int maxLabels;
+  final int? labelCount;
+  final bool skipFirstLabel;
+  final bool skipLastLabel;
   final LabelFunction labelProvider;
   final TextStyle textStyle;
   final bool drawLabels;
@@ -174,6 +177,9 @@ class AxisStyle {
       this.lineSize = _defaultLineSize,
       this.drawLabels = true,
       this.maxLabels = 20,
+      this.labelCount,
+      this.skipFirstLabel = false,
+      this.skipLastLabel = false,
       this.absoluteMin,
       this.absoluteMax,
       this.marginAbove,
@@ -185,6 +191,9 @@ class AxisStyle {
   @override
   int get hashCode => hashValues(
       maxLabels,
+      labelCount,
+      skipFirstLabel,
+      skipLastLabel,
       labelProvider,
       textStyle,
       drawLabels,
@@ -201,6 +210,9 @@ class AxisStyle {
   bool operator ==(Object other) =>
       other is AxisStyle &&
       other.maxLabels == maxLabels &&
+      other.labelCount == labelCount &&
+      other.skipFirstLabel == skipFirstLabel &&
+      other.skipLastLabel == skipLastLabel &&
       other.labelProvider == labelProvider &&
       other.textStyle == textStyle &&
       other.drawLabels == drawLabels &&
@@ -216,6 +228,9 @@ class AxisStyle {
 
   AxisStyle copyWith(
       {int? maxLabels,
+      int? labelCount,
+      bool? skipFirstLabel,
+      bool? skipLastLabel,
       LabelFunction? labelProvider,
       TextStyle? textStyle,
       bool? drawLabels,
@@ -230,11 +245,14 @@ class AxisStyle {
     return AxisStyle(
         textStyle: textStyle ?? this.textStyle,
         labelInsets: labelInsets ?? this.labelInsets,
+        skipFirstLabel: skipFirstLabel ?? this.skipFirstLabel,
+        skipLastLabel: skipLastLabel ?? this.skipLastLabel,
         labelProvider: labelProvider ?? this.labelProvider,
         lineColor: lineColor ?? this.lineColor,
         lineSize: lineSize ?? this.lineSize,
         drawLabels: drawLabels ?? this.drawLabels,
         maxLabels: maxLabels ?? this.maxLabels,
+        labelCount: labelCount ?? this.labelCount,
         absoluteMin: absoluteMin ?? this.absoluteMin,
         absoluteMax: absoluteMax ?? this.absoluteMax,
         marginAbove: marginAbove ?? this.marginAbove,

@@ -49,7 +49,7 @@ class AxisLabeller {
       final labelSize =
           labels.isEmpty ? 0 : labels.map((e) => _textSize(e)).reduce(max);
       final labelSizeWithSpacing = labelSize + spacing;
-      final labelCount =
+      final labelCount = axisStyle.labelCount ??
           min(axisStyle.maxLabels, length ~/ labelSizeWithSpacing);
       if (labelCount == 0) {
         _labelPoints = [];
@@ -74,12 +74,18 @@ class AxisLabeller {
         final metrics = axisDependency == YAxisDependency.LEFT
             ? projection.leftMetrics()
             : projection.rightMetrics();
+
         final interval = (metrics.rangeY / labelCount).ceil();
         _labelPoints = <LabelPoint>[];
         if (interval > 0) {
           for (var labelY = metrics.minY;
               labelY <= metrics.maxY;
               labelY += interval) {
+            if ((axisStyle.skipFirstLabel && labelY == metrics.minY) ||
+                (axisStyle.skipLastLabel &&
+                    (labelY + interval) > metrics.maxY)) {
+              continue;
+            }
             final text = axisStyle.labelProvider(DataPoint(x: 0, y: labelY));
             final painter = _createPainter(text);
 
