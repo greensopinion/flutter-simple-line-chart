@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -58,7 +60,7 @@ class LineChart extends StatelessWidget {
     return LayoutBuilder(builder: (context, constraints) {
       final children = <Widget>[];
 
-      final legendHeight = _legendHeight();
+      final legendHeight = _estimateLegendHeight(constraints.maxWidth);
       final bottomInset = _xAxisHeight(style.bottomAxisStyle) + legendHeight;
 
       var leftAxisWidth = 0.0;
@@ -178,9 +180,25 @@ class LineChart extends StatelessWidget {
       ? 0.0
       : _labelHeight(style) + style.labelInsets.bottom + style.labelInsets.top;
 
-  double _legendHeight() =>
-      style.legendStyle.heightInsets +
-      createTextPainter(style.legendStyle.textStyle, 'SAMPLE').height;
+  double _estimateLegendHeight(double maxWidth) {
+    double height = style.legendStyle.heightInsets;
+    double lineHeight = 0;
+    double lineOffset = 0;
+    data.datasets.forEach((dataset) {
+      final painter =
+          createTextPainter(style.legendStyle.textStyle, dataset.label);
+      if (lineOffset > 0 && painter.width + lineOffset > maxWidth) {
+        height += lineHeight;
+        lineOffset = 0;
+        lineHeight = 0;
+      }
+      lineHeight =
+          max(painter.height + (style.legendStyle.borderSize * 2), lineHeight);
+      lineOffset += painter.width + Legend.widthAroundText(style.legendStyle);
+    });
+    height += lineHeight;
+    return height;
+  }
 
   double _labelHeight(AxisStyle? style) {
     if (style == null) {

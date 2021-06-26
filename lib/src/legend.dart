@@ -24,6 +24,13 @@ class Legend extends StatelessWidget {
               padding: EdgeInsets.only(right: item.boxSize), child: item);
         }).toList()));
   }
+
+  static double widthAroundText(LegendStyle style) {
+    double boxSize = (style.textStyle.fontSize ?? LegendStyle.defaultFontSize);
+    double borderSize = style.borderSize * 2;
+    double padding = boxSize / 2;
+    return boxSize + borderSize + padding;
+  }
 }
 
 class _LegendItem extends StatelessWidget {
