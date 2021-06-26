@@ -46,14 +46,12 @@ class _LineChartContentState extends State<LineChartContent> {
     return Column(children: [
       Padding(
           padding: EdgeInsets.only(top: 20),
-          child: SizedBox(
-              height: 300,
-              // add the chart
-              child: LineChart(
-                  // chart is styled
-                  style: LineChartStyle.fromTheme(context),
-                  // chart has data
-                  data: data)))
+          child: LineChart(
+              // chart is styled
+              style: LineChartStyle.fromTheme(context),
+              seriesHeight: 300,
+              // chart has data
+              data: data))
     ]);
   }
 }

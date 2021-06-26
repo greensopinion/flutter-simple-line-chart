@@ -44,6 +44,7 @@ class LineChartController {
 class LineChart extends StatelessWidget {
   final LineChartData data;
   final LineChartStyle style;
+  final double seriesHeight;
   final EdgeInsets padding;
   late final LineChartController controller;
 
@@ -51,6 +52,7 @@ class LineChart extends StatelessWidget {
       {Key? key,
       required this.style,
       required this.data,
+      required this.seriesHeight,
       EdgeInsets? padding = const EdgeInsets.only(left: 10, right: 10),
       LineChartController? controller})
       : this.padding = padding ?? EdgeInsets.zero,
@@ -62,12 +64,11 @@ class LineChart extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       final frame = BoxConstraints(
-          maxHeight: constraints.maxHeight - padding.top - padding.bottom,
+          maxHeight: seriesHeight - padding.top - padding.bottom,
           maxWidth: constraints.maxWidth - padding.left - padding.right);
       final children = <Widget>[];
 
-      final legendHeight = _estimateLegendHeight(frame.maxWidth);
-      final bottomInset = _xAxisHeight(style.bottomAxisStyle) + legendHeight;
+      final bottomInset = _xAxisHeight(style.bottomAxisStyle);
 
       var leftAxisWidth = 0.0;
       var rightAxisWidth = 0.0;
@@ -170,55 +171,36 @@ class LineChart extends StatelessWidget {
               controller: controller,
               xLabeller: bottomAxisLabeller ?? topAxisLabeller!,
               yLabeller: leftAxisLabeller ?? rightAxisLabeller!)));
+      final chartComponents = <Widget>[
+        Container(
+          width: constraints.maxWidth,
+          height: seriesHeight,
+          child: Stack(clipBehavior: Clip.none, children: [
+            Positioned(
+                left: padding.left,
+                top: padding.top,
+                width: frame.maxWidth,
+                height: frame.maxHeight,
+                child: Stack(clipBehavior: Clip.none, children: children))
+          ]),
+        )
+      ];
       if (style.legendStyle != null) {
-        children.add(Positioned(
-            left: leftAxisWidth,
-            top: frame.maxHeight - legendHeight,
-            width: frame.maxWidth - leftAxisWidth - rightAxisWidth,
-            height: legendHeight,
+        chartComponents.add(Padding(
+            padding: EdgeInsets.only(
+                left: leftAxisWidth + padding.left,
+                right: rightAxisWidth + padding.right),
             child: Legend(style: style, data: data)));
       }
-      return Container(
-        width: constraints.maxWidth,
-        height: constraints.maxHeight,
-        child: Stack(clipBehavior: Clip.none, children: [
-          Positioned(
-              left: padding.left,
-              top: padding.top,
-              width: frame.maxWidth,
-              height: frame.maxHeight,
-              child: Stack(clipBehavior: Clip.none, children: children))
-        ]),
-      );
+      return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: chartComponents);
     });
   }
 
   double _xAxisHeight(AxisStyle? style) => style == null
       ? 0.0
       : _labelHeight(style) + style.labelInsets.bottom + style.labelInsets.top;
-
-  double _estimateLegendHeight(double maxWidth) {
-    final legendStyle = style.legendStyle;
-    if (legendStyle == null) {
-      return 0;
-    }
-    double height = legendStyle.heightInsets;
-    double lineHeight = 0;
-    double lineOffset = 0;
-    data.datasets.forEach((dataset) {
-      final painter = createTextPainter(legendStyle.textStyle, dataset.label);
-      if (lineOffset > 0 && painter.width + lineOffset > maxWidth) {
-        height += lineHeight;
-        lineOffset = 0;
-        lineHeight = 0;
-      }
-      lineHeight =
-          max(painter.height + (legendStyle.borderSize * 2), lineHeight);
-      lineOffset += painter.width + Legend.widthAroundText(legendStyle);
-    });
-    height += lineHeight;
-    return height;
-  }
 
   double _labelHeight(AxisStyle? style) {
     if (style == null) {
