@@ -13,17 +13,24 @@ import 'x_axis.dart';
 import 'y_axis.dart';
 
 class LineChartController {
-  List<QualifiedDataPoint> _selection = [];
   late final Function()? _onSelectionChanged;
+  SelectionModel? _selectionModel;
 
   LineChartController({Function()? onSelectionChanged}) {
     this._onSelectionChanged = onSelectionChanged;
   }
 
-  List<QualifiedDataPoint> get selection => _selection;
+  List<QualifiedDataPoint> get selection => _selectionModel?.selection ?? [];
+  set selection(List<QualifiedDataPoint> newSelection) {
+    final model = _selectionModel;
+    if (model == null) {
+      throw Exception(
+          'Can\'t set selection before the component is initialized');
+    }
+    model.selection = newSelection;
+  }
 
   void _selectionChanged(List<QualifiedDataPoint> selection) {
-    this._selection = selection;
     Function()? onChanged = _onSelectionChanged;
     if (onChanged != null) {
       onChanged();
@@ -200,6 +207,7 @@ class _ChartAreaState extends State<_ChartArea> {
         create: (context) {
           _selectionModel = SelectionModel(widget.style, widget.data, size);
           _selectionModel?.addListener(_onSelectionChanged);
+          widget.controller._selectionModel = _selectionModel;
           return _selectionModel!;
         },
         builder: (context, child) => GestureDetector(

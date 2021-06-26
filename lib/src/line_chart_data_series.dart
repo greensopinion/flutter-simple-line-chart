@@ -87,8 +87,8 @@ class _LineChartDataSeriesState extends State<LineChartDataSeries>
 
   @override
   void dispose() {
-    super.dispose();
     _controller.dispose();
+    super.dispose();
   }
 }
 
