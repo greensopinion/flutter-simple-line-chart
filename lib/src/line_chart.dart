@@ -14,13 +14,20 @@ import 'y_axis.dart';
 
 class LineChartController {
   List<QualifiedDataPoint> _selection = [];
+  late final Function()? _onSelectionChanged;
+
+  LineChartController({Function()? onSelectionChanged}) {
+    this._onSelectionChanged = onSelectionChanged;
+  }
 
   List<QualifiedDataPoint> get selection => _selection;
-  void onSelectionChanged() {}
 
   void _selectionChanged(List<QualifiedDataPoint> selection) {
     this._selection = selection;
-    onSelectionChanged();
+    Function()? onChanged = _onSelectionChanged;
+    if (onChanged != null) {
+      onChanged();
+    }
   }
 }
 
