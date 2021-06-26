@@ -33,15 +33,15 @@ class YAxis extends StatelessWidget {
     }
     return LayoutBuilder(builder: (context, constraints) {
       final labelPoints = labeller.labelPoints();
-      final width = labeller.width;
-      final children = labelPoints.map((p) {
-        return Positioned(
-            child: Text(p.text),
-            left: (side == YAxisSide.RIGHT) ? 0 : width - p.width,
-            top: p.offset + labelOffset);
-      }).toList();
+      final width = constraints.maxWidth;
+      final children = labelPoints
+          .map((p) => Positioned(
+              child: Text(p.text, style: style.textStyle),
+              left: (side == YAxisSide.RIGHT) ? 0 : width - p.width,
+              top: p.offset + labelOffset))
+          .toList();
       return Container(
-        width: width,
+        width: constraints.maxWidth,
         height: double.infinity,
         child: Stack(children: children),
       );

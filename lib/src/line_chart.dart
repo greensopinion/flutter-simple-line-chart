@@ -9,6 +9,7 @@ import 'line_chart_grid.dart';
 import 'line_chart_selection.dart';
 import 'selection_model.dart';
 import 'style.dart';
+import 'text_painter.dart';
 import 'x_axis.dart';
 import 'y_axis.dart';
 
@@ -56,16 +57,18 @@ class LineChart extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       final children = <Widget>[];
-      final topInset = _xAxisHeight(style.topAxisStyle);
+
       final legendHeight = _legendHeight();
       final bottomInset = _xAxisHeight(style.bottomAxisStyle) + legendHeight;
-      final verticalAxisInset = topInset + bottomInset;
+
       var leftAxisWidth = 0.0;
       var rightAxisWidth = 0.0;
       final leftDatasets =
           data.datasetsOf(axisDependency: YAxisDependency.LEFT);
       final rightDatasets =
           data.datasetsOf(axisDependency: YAxisDependency.RIGHT);
+      final topInset = _xAxisHeight(style.topAxisStyle);
+      final verticalAxisInset = topInset + bottomInset;
       AxisLabeller? leftAxisLabeller = style.leftAxisStyle == null
           ? null
           : AxisLabeller(style.leftAxisStyle!, leftDatasets, AxisDimension.Y,
@@ -81,6 +84,22 @@ class LineChart extends StatelessWidget {
         leftAxisWidth = leftAxisLabeller.width +
             leftAxisLabeller.style.labelInsets.left +
             leftAxisLabeller.style.labelInsets.right;
+      }
+      if (rightAxisLabeller != null) {
+        rightAxisWidth = rightAxisLabeller.width +
+            rightAxisLabeller.style.labelInsets.left +
+            rightAxisLabeller.style.labelInsets.right;
+      }
+      AxisLabeller? topAxisLabeller = style.topAxisStyle == null
+          ? null
+          : AxisLabeller(style.topAxisStyle!, data.datasets, AxisDimension.X,
+              constraints.maxWidth - leftAxisWidth - rightAxisWidth);
+
+      AxisLabeller? bottomAxisLabeller = style.bottomAxisStyle == null
+          ? null
+          : AxisLabeller(style.bottomAxisStyle!, data.datasets, AxisDimension.X,
+              constraints.maxWidth - leftAxisWidth - rightAxisWidth);
+      if (leftAxisLabeller != null) {
         children.add(Positioned(
             left: 0,
             top: 0,
@@ -94,9 +113,6 @@ class LineChart extends StatelessWidget {
                 data: data)));
       }
       if (rightAxisLabeller != null) {
-        rightAxisWidth = rightAxisLabeller.width +
-            rightAxisLabeller.style.labelInsets.left +
-            rightAxisLabeller.style.labelInsets.right;
         children.add(Positioned(
             left: constraints.maxWidth - rightAxisWidth,
             top: 0,
@@ -109,15 +125,6 @@ class LineChart extends StatelessWidget {
                 labelOffset: topInset,
                 data: data)));
       }
-      AxisLabeller? topAxisLabeller = style.topAxisStyle == null
-          ? null
-          : AxisLabeller(style.topAxisStyle!, data.datasets, AxisDimension.X,
-              constraints.maxWidth - leftAxisWidth - rightAxisWidth);
-
-      AxisLabeller? bottomAxisLabeller = style.bottomAxisStyle == null
-          ? null
-          : AxisLabeller(style.bottomAxisStyle!, data.datasets, AxisDimension.X,
-              constraints.maxWidth - leftAxisWidth - rightAxisWidth);
       if (topAxisLabeller != null) {
         children.add(Positioned(
             left: 0,
@@ -157,7 +164,7 @@ class LineChart extends StatelessWidget {
           left: leftAxisWidth,
           top: constraints.maxHeight - legendHeight,
           width: constraints.maxWidth - leftAxisWidth - rightAxisWidth,
-          height: topInset,
+          height: legendHeight,
           child: Legend(style: style, data: data)));
       return Container(
         width: constraints.maxWidth,
@@ -169,9 +176,18 @@ class LineChart extends StatelessWidget {
 
   double _xAxisHeight(AxisStyle? style) => style == null
       ? 0.0
-      : style.fontSize + style.labelInsets.bottom + style.labelInsets.top;
+      : _labelHeight(style) + style.labelInsets.bottom + style.labelInsets.top;
 
-  double _legendHeight() => style.legendStyle.height;
+  double _legendHeight() =>
+      style.legendStyle.heightInsets +
+      createTextPainter(style.legendStyle.textStyle, 'SAMPLE').height;
+
+  double _labelHeight(AxisStyle? style) {
+    if (style == null) {
+      return 0;
+    }
+    return createTextPainter(style.textStyle, 'SAMPLE').height;
+  }
 }
 
 class _ChartArea extends StatefulWidget {

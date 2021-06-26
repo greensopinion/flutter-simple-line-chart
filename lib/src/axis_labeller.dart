@@ -6,6 +6,7 @@ import 'package:flutter/painting.dart';
 import 'line_chart_data.dart';
 import 'style.dart';
 import 'extensions.dart';
+import 'text_painter.dart';
 
 enum AxisDimension { X, Y }
 
@@ -20,7 +21,11 @@ class AxisLabeller {
 
   double get fontSize => style.textStyle.fontSize ?? AxisStyle.defaultFontSize;
   double get spacing => fontSize;
-  double get width => labelPoints().map((e) => e.width).reduce(max);
+  double get width =>
+      labelPoints().isEmpty ? 0 : labelPoints().map((e) => e.width).reduce(max);
+  double get labelHeight => labelPoints().isEmpty
+      ? 0
+      : labelPoints().map((e) => e.height).reduce(max);
 
   List<LabelPoint> labelPoints() {
     if (datasets.isEmpty || datasets.first.dataPoints.length < 2) {
@@ -28,7 +33,8 @@ class AxisLabeller {
     }
     if (_labelPoints == null) {
       final labels = _labelPainter(datasets.first.dataPoints).toList();
-      final labelSize = labels.map((e) => _textSize(e)).reduce(max);
+      final labelSize =
+          labels.isEmpty ? 0 : labels.map((e) => _textSize(e)).reduce(max);
       final labelSizeWithSpacing = labelSize + spacing;
       final labelCount = min(style.maxLabels, length ~/ labelSizeWithSpacing);
       if (axis == AxisDimension.X) {
@@ -39,8 +45,9 @@ class AxisLabeller {
             .where((e) => (e.key % interval) == 0)
             .map((e) => LabelPoint(
                 style.labelProvider(e.value.dataPoint),
-                _textSize(e.value),
-                e.value.painter.width,
+                e.value.painter.width + _textWidthCorrection,
+                e.value.painter.width + _textWidthCorrection,
+                e.value.painter.height,
                 _centerX(e.value.dataPoint)))
             .toList();
       } else {
@@ -73,8 +80,8 @@ class AxisLabeller {
 
           final offset = labelY.difference(minY);
           final center = offset / range * length;
-          _labelPoints!.add(
-              LabelPoint(text, painter.height, painter.width, length - center));
+          _labelPoints!.add(LabelPoint(text, painter.height, painter.width,
+              painter.height, length - center));
         }
       }
     }
@@ -84,11 +91,8 @@ class AxisLabeller {
   Iterable<_PainterPoint> _labelPainter(Iterable<DataPoint> points) => points
       .map((p) => _PainterPoint(p, _createPainter(style.labelProvider(p))));
 
-  TextPainter _createPainter(String text) => TextPainter(
-      text: TextSpan(style: style.textStyle, text: text),
-      textAlign: TextAlign.center,
-      textDirection: TextDirection.ltr)
-    ..layout();
+  TextPainter _createPainter(String text) =>
+      createTextPainter(style.textStyle, text);
 
   double _centerX(DataPoint point) {
     final first = datasets.first.dataPoints.first;
@@ -98,8 +102,9 @@ class AxisLabeller {
     return offset / range * length;
   }
 
-  double _textSize(_PainterPoint e) =>
-      (axis == AxisDimension.Y) ? e.painter.height : e.painter.width;
+  double _textSize(_PainterPoint e) => (axis == AxisDimension.Y)
+      ? e.painter.height
+      : e.painter.width + _textWidthCorrection;
 }
 
 extension _PainterExtension on Iterable<DataPoint> {}
@@ -108,14 +113,19 @@ class LabelPoint {
   final String text;
   final double size;
   final double center;
-  final double width;
+  late final double width;
+  final double height;
 
-  LabelPoint(this.text, this.size, this.width, this.center);
+  LabelPoint(this.text, this.size, this.width, this.height, this.center);
 
   double get offset => center - (size / 2);
 
   double get farEdge => center + (size / 2);
 }
+
+// not sure why, but TextPainter seems to calculate
+// text width short by 2 pixels
+const double _textWidthCorrection = 2;
 
 class _PainterPoint {
   final DataPoint dataPoint;

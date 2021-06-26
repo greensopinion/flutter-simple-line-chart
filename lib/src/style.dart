@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:simple_line_chart/src/text_painter.dart';
 
 import 'line_chart_data.dart';
 
@@ -30,12 +31,12 @@ class LineChartStyle {
       {List<Color>? datasetColors}) {
     final theme = Theme.of(context);
     final textStyle = theme.textTheme.bodyText1 ?? theme.textTheme.bodyText2!;
+    final fontHeight = createTextPainter(textStyle, 'SAMPLE').height;
     final lineColor = textStyle.color!.withOpacity(0.3);
     final datasetStyles = (datasetColors ?? _defaultDatasetColors())
         .map((c) => DatasetStyle(color: c))
         .toList();
-    final fontSize = textStyle.fontSize ?? LegendStyle.defaultFontSize;
-    final legendInsets = EdgeInsets.only(top: fontSize);
+    final legendInsets = EdgeInsets.only(top: fontHeight / 2);
     final highlight =
         HighlightStyle(color: _Colors.highlight, lineSize: _defaultLineSize);
 
@@ -48,20 +49,20 @@ class LineChartStyle {
             textStyle: textStyle,
             lineColor: lineColor,
             labelProvider: (point) => _defaultLabelProvider(point.x),
-            labelInsets: EdgeInsets.only(bottom: fontSize / 2)),
+            labelInsets: EdgeInsets.only(bottom: fontHeight / 2)),
         bottomAxisStyle: AxisStyle(
             textStyle: textStyle,
             lineColor: lineColor,
             labelProvider: (point) => _defaultLabelProvider(point.x),
-            labelInsets: EdgeInsets.only(top: fontSize / 2)),
+            labelInsets: EdgeInsets.only(top: fontHeight / 2)),
         leftAxisStyle: AxisStyle(
             textStyle: textStyle,
-            labelInsets: EdgeInsets.only(right: fontSize / 2),
+            labelInsets: EdgeInsets.only(right: fontHeight / 2),
             labelProvider: (point) => _defaultLabelProvider(point.y),
             lineColor: lineColor),
         rightAxisStyle: AxisStyle(
             textStyle: textStyle,
-            labelInsets: EdgeInsets.only(left: fontSize / 2),
+            labelInsets: EdgeInsets.only(left: fontHeight / 2),
             labelProvider: (point) => _defaultLabelProvider(point.y),
             lineColor: lineColor));
   }
@@ -235,7 +236,7 @@ class LegendStyle {
       {required this.lineColor, required this.textStyle, required this.insets});
 
   double get fontSize => textStyle.fontSize ?? defaultFontSize;
-  double get height => fontSize + insets.top + insets.bottom + (borderSize * 2);
+  double get heightInsets => insets.top + insets.bottom + (borderSize * 2);
 
   LegendStyle copyWith(
       {Color? lineColor, TextStyle? textStyle, EdgeInsets? insets}) {
@@ -338,7 +339,7 @@ class _Colors {
   static final Color highlight = Color.fromARGB(_opaque, 242, 155, 29);
 }
 
-String _defaultLabelProvider(double v) => v.toStringAsFixed(1);
+String _defaultLabelProvider(double v) => v.toStringAsFixed(0);
 
 const _defaultLineSize = 1.0;
 const _defaultFontSize = 12.0;

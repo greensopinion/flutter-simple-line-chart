@@ -29,11 +29,13 @@ class XAxis extends StatelessWidget {
     }
     final labelPoints = labeller.labelPoints();
     final children = labelPoints.map((p) {
-      return Positioned(child: Text(p.text), left: p.offset + labelOffset);
+      return Positioned(
+          child: Text(p.text, style: style.textStyle),
+          left: p.offset + labelOffset);
     }).toList();
     return Container(
       width: labeller.length,
-      height: labeller.fontSize,
+      height: labeller.labelHeight,
       child: Stack(children: children),
     );
   }
