@@ -44,7 +44,9 @@ class AxisLabeller {
       final labelSizeWithSpacing = labelSize + spacing;
       final labelCount =
           min(axisStyle.maxLabels, length ~/ labelSizeWithSpacing);
-      if (axis == AxisDimension.X) {
+      if (labelCount == 0) {
+        _labelPoints = [];
+      } else if (axis == AxisDimension.X) {
         final interval = (datasets.first.dataPoints.length / labelCount).ceil();
         _labelPoints = labels
             .asMap()
