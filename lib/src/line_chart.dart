@@ -174,12 +174,14 @@ class LineChart extends StatelessWidget {
               controller: controller,
               xLabeller: bottomAxisLabeller ?? topAxisLabeller!,
               yLabeller: leftAxisLabeller ?? rightAxisLabeller!)));
-      children.add(Positioned(
-          left: leftAxisWidth,
-          top: constraints.maxHeight - legendHeight,
-          width: constraints.maxWidth - leftAxisWidth - rightAxisWidth,
-          height: legendHeight,
-          child: Legend(style: style, data: data)));
+      if (style.legendStyle != null) {
+        children.add(Positioned(
+            left: leftAxisWidth,
+            top: constraints.maxHeight - legendHeight,
+            width: constraints.maxWidth - leftAxisWidth - rightAxisWidth,
+            height: legendHeight,
+            child: Legend(style: style, data: data)));
+      }
       return Container(
         width: constraints.maxWidth,
         height: constraints.maxHeight,
@@ -193,20 +195,23 @@ class LineChart extends StatelessWidget {
       : _labelHeight(style) + style.labelInsets.bottom + style.labelInsets.top;
 
   double _estimateLegendHeight(double maxWidth) {
-    double height = style.legendStyle.heightInsets;
+    final legendStyle = style.legendStyle;
+    if (legendStyle == null) {
+      return 0;
+    }
+    double height = legendStyle.heightInsets;
     double lineHeight = 0;
     double lineOffset = 0;
     data.datasets.forEach((dataset) {
-      final painter =
-          createTextPainter(style.legendStyle.textStyle, dataset.label);
+      final painter = createTextPainter(legendStyle.textStyle, dataset.label);
       if (lineOffset > 0 && painter.width + lineOffset > maxWidth) {
         height += lineHeight;
         lineOffset = 0;
         lineHeight = 0;
       }
       lineHeight =
-          max(painter.height + (style.legendStyle.borderSize * 2), lineHeight);
-      lineOffset += painter.width + Legend.widthAroundText(style.legendStyle);
+          max(painter.height + (legendStyle.borderSize * 2), lineHeight);
+      lineOffset += painter.width + Legend.widthAroundText(legendStyle);
     });
     height += lineHeight;
     return height;

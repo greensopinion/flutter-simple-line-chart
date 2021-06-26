@@ -5,7 +5,7 @@ import 'package:simple_line_chart/src/text_painter.dart';
 import 'line_chart_data.dart';
 
 class LineChartStyle {
-  final LegendStyle legendStyle;
+  final LegendStyle? legendStyle;
   final List<DatasetStyle> datasetStyles;
   final AxisStyle? topAxisStyle;
   final AxisStyle? bottomAxisStyle;
@@ -104,6 +104,18 @@ class LineChartStyle {
       AxisStyle? rightAxisStyle}) {
     return LineChartStyle(
         legendStyle: legendStyle,
+        datasetStyles: datasetStyles,
+        animationDuration: animationDuration,
+        bottomAxisStyle: bottomAxisStyle,
+        leftAxisStyle: leftAxisStyle,
+        rightAxisStyle: rightAxisStyle,
+        topAxisStyle: topAxisStyle,
+        highlightStyle: highlightStyle);
+  }
+
+  LineChartStyle copyWithoutLegend() {
+    return LineChartStyle(
+        legendStyle: null,
         datasetStyles: datasetStyles,
         animationDuration: animationDuration,
         bottomAxisStyle: bottomAxisStyle,

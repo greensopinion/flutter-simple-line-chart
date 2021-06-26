@@ -13,12 +13,12 @@ class Legend extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: style.legendStyle.insets,
+        padding: style.legendStyle!.insets,
         child: Wrap(
             children: data.datasets.asMap().entries.map((e) {
           final item = _LegendItem(
               style: style.datasetStyleOfIndex(e.key),
-              legendStyle: style.legendStyle,
+              legendStyle: style.legendStyle!,
               dataset: e.value);
           return Padding(
               padding: EdgeInsets.only(right: item.boxSize), child: item);
