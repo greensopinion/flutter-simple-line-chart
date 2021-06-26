@@ -73,33 +73,45 @@ class LineChart extends StatelessWidget {
       final verticalAxisInset = topInset + bottomInset;
       AxisLabeller? leftAxisLabeller = style.leftAxisStyle == null
           ? null
-          : AxisLabeller(style.leftAxisStyle!, leftDatasets, AxisDimension.Y,
-              constraints.maxHeight - verticalAxisInset);
+          : AxisLabeller(style, style.leftAxisStyle!, data, leftDatasets,
+              AxisDimension.Y, constraints.maxHeight - verticalAxisInset);
       AxisLabeller? rightAxisLabeller = style.rightAxisStyle == null
           ? null
           : AxisLabeller(
+              style,
               style.rightAxisStyle!,
+              data,
               rightDatasets.isEmpty ? leftDatasets : rightDatasets,
               AxisDimension.Y,
               constraints.maxHeight - verticalAxisInset);
       if (leftAxisLabeller != null) {
         leftAxisWidth = leftAxisLabeller.width +
-            leftAxisLabeller.style.labelInsets.left +
-            leftAxisLabeller.style.labelInsets.right;
+            leftAxisLabeller.axisStyle.labelInsets.left +
+            leftAxisLabeller.axisStyle.labelInsets.right;
       }
       if (rightAxisLabeller != null) {
         rightAxisWidth = rightAxisLabeller.width +
-            rightAxisLabeller.style.labelInsets.left +
-            rightAxisLabeller.style.labelInsets.right;
+            rightAxisLabeller.axisStyle.labelInsets.left +
+            rightAxisLabeller.axisStyle.labelInsets.right;
       }
       AxisLabeller? topAxisLabeller = style.topAxisStyle == null
           ? null
-          : AxisLabeller(style.topAxisStyle!, data.datasets, AxisDimension.X,
+          : AxisLabeller(
+              style,
+              style.topAxisStyle!,
+              data,
+              data.datasets,
+              AxisDimension.X,
               constraints.maxWidth - leftAxisWidth - rightAxisWidth);
 
       AxisLabeller? bottomAxisLabeller = style.bottomAxisStyle == null
           ? null
-          : AxisLabeller(style.bottomAxisStyle!, data.datasets, AxisDimension.X,
+          : AxisLabeller(
+              style,
+              style.bottomAxisStyle!,
+              data,
+              data.datasets,
+              AxisDimension.X,
               constraints.maxWidth - leftAxisWidth - rightAxisWidth);
       if (leftAxisLabeller != null) {
         children.add(Positioned(
@@ -108,7 +120,7 @@ class LineChart extends StatelessWidget {
             width: leftAxisWidth,
             height: constraints.maxHeight,
             child: YAxis(
-                style: leftAxisLabeller.style,
+                style: leftAxisLabeller.axisStyle,
                 labeller: leftAxisLabeller,
                 side: YAxisSide.LEFT,
                 labelOffset: topInset,
@@ -121,7 +133,7 @@ class LineChart extends StatelessWidget {
             width: rightAxisWidth,
             height: constraints.maxHeight,
             child: YAxis(
-                style: rightAxisLabeller.style,
+                style: rightAxisLabeller.axisStyle,
                 labeller: rightAxisLabeller,
                 side: YAxisSide.RIGHT,
                 labelOffset: topInset,
@@ -134,7 +146,7 @@ class LineChart extends StatelessWidget {
             width: constraints.maxWidth,
             height: topInset,
             child: XAxis(
-                style: topAxisLabeller.style,
+                style: topAxisLabeller.axisStyle,
                 labeller: topAxisLabeller,
                 labelOffset: leftAxisWidth,
                 data: data)));
@@ -146,7 +158,7 @@ class LineChart extends StatelessWidget {
             width: constraints.maxWidth,
             height: topInset,
             child: XAxis(
-                style: bottomAxisLabeller.style,
+                style: bottomAxisLabeller.axisStyle,
                 labeller: bottomAxisLabeller,
                 labelOffset: leftAxisWidth,
                 data: data)));

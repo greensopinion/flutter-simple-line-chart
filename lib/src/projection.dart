@@ -96,20 +96,25 @@ class _DatasetMetrics {
   YAxisDependency axisDependency;
   final double minX;
   final double maxX;
-  late final double minY;
-  late final double maxY;
+  late double _minY;
+  late double _maxY;
+  late double _yRange;
   late final double xRange;
-  late final double yRange;
+
+  double get minY => _minY;
+  double get maxY => _maxY;
+  double get yRange => _yRange;
 
   _DatasetMetrics(
       this.style, this.data, this.minX, this.maxX, this.axisDependency) {
-    minY = _minY();
-    maxY = _maxY();
+    _minY = _dataMinY();
+    _maxY = _dataMaxY();
     xRange = maxX - minX;
-    yRange = maxY - minY;
+    _yRange = _maxY - _minY;
+    _applyMinimumRange();
   }
 
-  double _minY() {
+  double _dataMinY() {
     final absoluteMin = _axisStyle?.absoluteMin;
     if (absoluteMin != null) {
       return absoluteMin;
@@ -122,7 +127,7 @@ class _DatasetMetrics {
     return min;
   }
 
-  double _maxY() {
+  double _dataMaxY() {
     final absoluteMax = _axisStyle?.absoluteMax;
     if (absoluteMax != null) {
       return absoluteMax;
@@ -138,4 +143,26 @@ class _DatasetMetrics {
   AxisStyle? get _axisStyle => axisDependency == YAxisDependency.LEFT
       ? style.leftAxisStyle
       : style.rightAxisStyle;
+
+  void _applyMinimumRange() {
+    final minimumRange = _axisStyle?.minimumRange;
+    if (minimumRange == null) {
+      return;
+    }
+    if (yRange < minimumRange) {
+      final difference = minimumRange - yRange;
+      final margin = difference / 2.0;
+      _maxY = (maxY + margin).ceil().toDouble();
+      _minY = (minY - margin).floor().toDouble();
+      final absoluteMin = _axisStyle?.absoluteMin;
+      if (absoluteMin != null && _minY < absoluteMin) {
+        _minY = absoluteMin;
+      }
+      final absoluteMax = _axisStyle?.absoluteMax;
+      if (absoluteMax != null && _maxY > absoluteMax) {
+        _maxY = absoluteMax;
+      }
+      _yRange = maxY - minY;
+    }
+  }
 }

@@ -152,6 +152,7 @@ class AxisStyle {
   final double? absoluteMax;
   final double? marginAbove;
   final double? marginBelow;
+  final double? minimumRange;
 
   AxisStyle(
       {required this.textStyle,
@@ -164,7 +165,8 @@ class AxisStyle {
       this.absoluteMin,
       this.absoluteMax,
       this.marginAbove,
-      this.marginBelow});
+      this.marginBelow,
+      this.minimumRange});
 
   double get fontSize => textStyle.fontSize ?? defaultFontSize;
 
@@ -180,7 +182,8 @@ class AxisStyle {
       absoluteMin,
       absoluteMax,
       marginAbove,
-      marginBelow);
+      marginBelow,
+      minimumRange);
 
   @override
   bool operator ==(Object other) =>
@@ -196,6 +199,7 @@ class AxisStyle {
       other.absoluteMin == absoluteMin &&
       other.marginAbove == marginAbove &&
       other.marginBelow == marginBelow &&
+      other.minimumRange == minimumRange &&
       other.textStyle == textStyle;
 
   AxisStyle copyWith(
@@ -209,7 +213,8 @@ class AxisStyle {
       double? absoluteMin,
       double? absoluteMax,
       double? marginAbove,
-      double? marginBelow}) {
+      double? marginBelow,
+      double? minimumRange}) {
     return AxisStyle(
         textStyle: textStyle ?? this.textStyle,
         labelInsets: labelInsets ?? this.labelInsets,
@@ -221,7 +226,8 @@ class AxisStyle {
         absoluteMin: absoluteMin ?? this.absoluteMin,
         absoluteMax: absoluteMax ?? this.absoluteMax,
         marginAbove: marginAbove ?? this.marginAbove,
-        marginBelow: marginBelow ?? this.marginBelow);
+        marginBelow: marginBelow ?? this.marginBelow,
+        minimumRange: minimumRange ?? this.minimumRange);
   }
 }
 

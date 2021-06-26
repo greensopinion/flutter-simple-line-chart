@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:simple_line_chart/src/projection.dart';
 
 import 'line_chart_data.dart';
 import 'style.dart';
@@ -11,15 +12,19 @@ import 'text_painter.dart';
 enum AxisDimension { X, Y }
 
 class AxisLabeller {
-  final AxisStyle style;
+  final LineChartStyle style;
+  final AxisStyle axisStyle;
+  final LineChartData data;
   final List<Dataset> datasets;
   final AxisDimension axis;
   final double length;
   List<LabelPoint>? _labelPoints;
 
-  AxisLabeller(this.style, this.datasets, this.axis, this.length);
+  AxisLabeller(this.style, this.axisStyle, this.data, this.datasets, this.axis,
+      this.length);
 
-  double get fontSize => style.textStyle.fontSize ?? AxisStyle.defaultFontSize;
+  double get fontSize =>
+      axisStyle.textStyle.fontSize ?? AxisStyle.defaultFontSize;
   double get spacing => fontSize;
   double get width =>
       labelPoints().isEmpty ? 0 : labelPoints().map((e) => e.width).reduce(max);
@@ -31,12 +36,14 @@ class AxisLabeller {
     if (datasets.isEmpty || datasets.first.dataPoints.length < 2) {
       return [];
     }
+    final projection = Projection(style, Size(length, length), data);
     if (_labelPoints == null) {
       final labels = _labelPainter(datasets.first.dataPoints).toList();
       final labelSize =
           labels.isEmpty ? 0 : labels.map((e) => _textSize(e)).reduce(max);
       final labelSizeWithSpacing = labelSize + spacing;
-      final labelCount = min(style.maxLabels, length ~/ labelSizeWithSpacing);
+      final labelCount =
+          min(axisStyle.maxLabels, length ~/ labelSizeWithSpacing);
       if (axis == AxisDimension.X) {
         final interval = (datasets.first.dataPoints.length / labelCount).ceil();
         _labelPoints = labels
@@ -44,11 +51,15 @@ class AxisLabeller {
             .entries
             .where((e) => (e.key % interval) == 0)
             .map((e) => LabelPoint(
-                style.labelProvider(e.value.dataPoint),
+                axisStyle.labelProvider(e.value.dataPoint),
                 e.value.painter.width + _textWidthCorrection,
                 e.value.painter.width + _textWidthCorrection,
                 e.value.painter.height,
-                _centerX(e.value.dataPoint)))
+                projection
+                    .toPixel(
+                        axisDependency: datasets.first.axisDependency,
+                        data: e.value.dataPoint.toOffset())
+                    .dx))
             .toList();
       } else {
         var minY = datasets
@@ -57,31 +68,31 @@ class AxisLabeller {
         var maxY = datasets
             .map((dataset) => dataset.dataPoints.map((p) => p.y).reduce(max))
             .reduce(max);
-        if (style.marginAbove != null) {
-          maxY += style.marginAbove!;
+        if (axisStyle.marginAbove != null) {
+          maxY += axisStyle.marginAbove!;
         }
-        if (style.marginBelow != null) {
-          minY -= style.marginBelow!;
+        if (axisStyle.marginBelow != null) {
+          minY -= axisStyle.marginBelow!;
         }
-        if (style.absoluteMin != null) {
-          minY = style.absoluteMin!;
+        if (axisStyle.absoluteMin != null) {
+          minY = axisStyle.absoluteMin!;
         }
-        if (style.absoluteMax != null) {
-          maxY = style.absoluteMax!;
+        if (axisStyle.absoluteMax != null) {
+          maxY = axisStyle.absoluteMax!;
         }
         minY = minY.floor().toDouble();
         maxY = maxY.ceil().toDouble();
-        final range = minY.difference(maxY);
         final interval = (minY.difference(maxY) / labelCount).ceil();
         _labelPoints = <LabelPoint>[];
         for (var labelY = minY; labelY <= maxY; labelY += interval) {
-          final text = style.labelProvider(DataPoint(x: 0, y: labelY));
+          final text = axisStyle.labelProvider(DataPoint(x: 0, y: labelY));
           final painter = _createPainter(text);
 
-          final offset = labelY.difference(minY);
-          final center = offset / range * length;
-          _labelPoints!.add(LabelPoint(text, painter.height, painter.width,
-              painter.height, length - center));
+          final center = projection.toPixel(
+              axisDependency: datasets.first.axisDependency,
+              data: Offset(0, labelY));
+          _labelPoints!.add(LabelPoint(
+              text, painter.height, painter.width, painter.height, center.dy));
         }
       }
     }
@@ -89,18 +100,10 @@ class AxisLabeller {
   }
 
   Iterable<_PainterPoint> _labelPainter(Iterable<DataPoint> points) => points
-      .map((p) => _PainterPoint(p, _createPainter(style.labelProvider(p))));
+      .map((p) => _PainterPoint(p, _createPainter(axisStyle.labelProvider(p))));
 
   TextPainter _createPainter(String text) =>
-      createTextPainter(style.textStyle, text);
-
-  double _centerX(DataPoint point) {
-    final first = datasets.first.dataPoints.first;
-    final last = datasets.first.dataPoints.last;
-    final range = last.x.difference(first.x);
-    final offset = first.x.difference(point.x);
-    return offset / range * length;
-  }
+      createTextPainter(axisStyle.textStyle, text);
 
   double _textSize(_PainterPoint e) => (axis == AxisDimension.Y)
       ? e.painter.height
