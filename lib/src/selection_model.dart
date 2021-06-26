@@ -13,8 +13,10 @@ class SelectionModel extends ChangeNotifier {
 
   List<QualifiedDataPoint> get selection => _selection;
   set selection(List<QualifiedDataPoint> newSelection) {
-    _selection = newSelection;
-    notifyListeners();
+    if (_selection != newSelection) {
+      _selection = newSelection;
+      notifyListeners();
+    }
   }
 
   Projection get projection {
