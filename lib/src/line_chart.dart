@@ -187,9 +187,7 @@ class LineChart extends StatelessWidget {
       ];
       if (style.legendStyle != null) {
         chartComponents.add(Padding(
-            padding: EdgeInsets.only(
-                left: leftAxisWidth + padding.left,
-                right: rightAxisWidth + padding.right),
+            padding: EdgeInsets.only(left: leftAxisWidth + padding.left),
             child: Legend(style: style, data: data)));
       }
       return Column(

@@ -25,7 +25,7 @@ class AxisLabeller {
 
   double get fontSize =>
       axisStyle.textStyle.fontSize ?? AxisStyle.defaultFontSize;
-  double get spacing => fontSize;
+  double get spacing => fontSize / 2.0;
   double get width =>
       labelPoints().isEmpty ? 0 : labelPoints().map((e) => e.width).reduce(max);
   double get labelHeight => labelPoints().isEmpty
