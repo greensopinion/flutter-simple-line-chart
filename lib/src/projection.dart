@@ -61,7 +61,8 @@ class Projection {
       {required YAxisDependency axisDependency, required Offset position}) {
     final metrics = _metrics(axisDependency);
     final dataX = ((position.dx / size.width) * metrics.xRange) + metrics.minX;
-    return data.datasets
+    return data
+        .datasetsOf(axisDependency: axisDependency)
         .map((dataset) {
           final point = _closestByX(dataset, dataX);
           if (point != null) {

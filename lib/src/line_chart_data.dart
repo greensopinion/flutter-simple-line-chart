@@ -29,6 +29,10 @@ class LineChartData {
   @override
   bool operator ==(Object other) =>
       other is LineChartData && other.datasets == datasets;
+
+  @override
+  String toString() =>
+      'LineChartData(datasets=${datasets.map((e) => e.label).join(", ")})';
 }
 
 extension DatasetListExtension on List<Dataset> {
@@ -82,6 +86,10 @@ class Dataset {
       other is Dataset &&
       other.label == label &&
       other.dataPoints == dataPoints;
+
+  @override
+  String toString() =>
+      'Dataset(label=$label,dataPoints=[${dataPoints.length}])';
 }
 
 class DataPoint {
@@ -102,6 +110,9 @@ class DataPoint {
       other.x == x &&
       other.y == y &&
       other.model == model;
+
+  @override
+  String toString() => 'DataPoint(x=$x,y=$y,model=$model)';
 }
 
 class QualifiedDataPoint {
@@ -118,4 +129,8 @@ class QualifiedDataPoint {
       other is QualifiedDataPoint &&
       other.dataPoint == dataPoint &&
       other.dataset == dataset;
+
+  @override
+  String toString() =>
+      'QualifiedDataPoint(dataset=$dataset,dataPoint=$dataPoint)';
 }
