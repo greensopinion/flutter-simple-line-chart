@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:simple_line_chart/src/text_painter.dart';
 
 import 'line_chart_data.dart';
+import 'text_painter.dart';
 
 class LineChartStyle {
   final LegendStyle? legendStyle;

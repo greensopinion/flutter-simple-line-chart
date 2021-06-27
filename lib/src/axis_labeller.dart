@@ -2,12 +2,12 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:simple_line_chart/src/projection.dart';
 
+import 'extensions.dart';
 import 'line_chart_data.dart';
+import 'projection.dart';
 import 'style.dart';
 import 'text_painter.dart';
-import 'extensions.dart';
 
 enum AxisDimension { X, Y }
 

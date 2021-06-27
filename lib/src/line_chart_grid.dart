@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../simple_line_chart.dart';
 
 import 'axis_labeller.dart';
+import 'style.dart';
 
 class LineChartGrid extends StatelessWidget {
   final AxisStyle style;
