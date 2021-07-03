@@ -157,6 +157,7 @@ class AxisStyle {
   final int? labelCount;
   final bool skipFirstLabel;
   final bool skipLastLabel;
+  final bool labelOnDatapoints;
   final LabelFunction labelProvider;
   final TextStyle textStyle;
   final bool drawLabels;
@@ -180,6 +181,7 @@ class AxisStyle {
       this.labelCount,
       this.skipFirstLabel = false,
       this.skipLastLabel = false,
+      this.labelOnDatapoints = false,
       this.absoluteMin,
       this.absoluteMax,
       this.marginAbove,
@@ -194,6 +196,7 @@ class AxisStyle {
       labelCount,
       skipFirstLabel,
       skipLastLabel,
+      labelOnDatapoints,
       labelProvider,
       textStyle,
       drawLabels,
@@ -213,6 +216,7 @@ class AxisStyle {
       other.labelCount == labelCount &&
       other.skipFirstLabel == skipFirstLabel &&
       other.skipLastLabel == skipLastLabel &&
+      other.labelOnDatapoints == labelOnDatapoints &&
       other.labelProvider == labelProvider &&
       other.textStyle == textStyle &&
       other.drawLabels == drawLabels &&
@@ -231,6 +235,7 @@ class AxisStyle {
       int? labelCount,
       bool? skipFirstLabel,
       bool? skipLastLabel,
+      bool? labelOnDatapoints,
       LabelFunction? labelProvider,
       TextStyle? textStyle,
       bool? drawLabels,
@@ -247,6 +252,7 @@ class AxisStyle {
         labelInsets: labelInsets ?? this.labelInsets,
         skipFirstLabel: skipFirstLabel ?? this.skipFirstLabel,
         skipLastLabel: skipLastLabel ?? this.skipLastLabel,
+        labelOnDatapoints: labelOnDatapoints ?? this.labelOnDatapoints,
         labelProvider: labelProvider ?? this.labelProvider,
         lineColor: lineColor ?? this.lineColor,
         lineSize: lineSize ?? this.lineSize,

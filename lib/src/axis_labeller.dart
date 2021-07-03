@@ -58,22 +58,23 @@ class AxisLabeller {
         double minX = data.datasets.minX();
         double maxX = data.datasets.maxX();
         double range = minX.difference(maxX);
-        final interval = (range / labelCount);
         _labelPoints = <LabelPoint>[];
-        if (interval > 0) {
-          for (var labelX = minX; labelX <= maxX; labelX += interval) {
-            final text = axisStyle.labelProvider(DataPoint(x: labelX, y: 0));
-            final painter = _createPainter(text);
-
-            final center = projection.toPixel(
-                axisDependency: datasets.first.axisDependency,
-                data: Offset(labelX, 0));
-            _labelPoints!.add(LabelPoint(
-                text,
-                painter.width + _textWidthCorrection,
-                painter.width + _textWidthCorrection,
-                painter.height,
-                center.dx));
+        if (axisStyle.labelOnDatapoints) {
+          final interval =
+              (datasets.first.dataPoints.length / labelCount).ceil();
+          datasets.first.dataPoints.asMap().forEach((index, point) {
+            if (index % interval == 0) {
+              _labelPoints!.add(_createXaxisLabelPoint(
+                  projection, point, datasets.first.axisDependency));
+            }
+          });
+        } else {
+          final interval = (range / labelCount);
+          if (interval > 0) {
+            for (var labelX = minX; labelX <= maxX; labelX += interval) {
+              _labelPoints!.add(_createXaxisLabelPoint(projection,
+                  DataPoint(x: labelX, y: 0), datasets.first.axisDependency));
+            }
           }
         }
       } else {
@@ -116,6 +117,17 @@ class AxisLabeller {
   double _textSize(_PainterPoint e) => (axis == AxisDimension.Y)
       ? e.painter.height
       : e.painter.width + _textWidthCorrection;
+
+  LabelPoint _createXaxisLabelPoint(
+      Projection projection, DataPoint point, YAxisDependency axisDependency) {
+    final text = axisStyle.labelProvider(point);
+    final painter = _createPainter(text);
+
+    final center = projection.toPixel(
+        axisDependency: axisDependency, data: Offset(point.x, 0));
+    return LabelPoint(text, painter.width + _textWidthCorrection,
+        painter.width + _textWidthCorrection, painter.height, center.dx);
+  }
 }
 
 extension _PainterExtension on Iterable<DataPoint> {}
