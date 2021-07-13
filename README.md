@@ -72,9 +72,6 @@ List<DataPoint> _createDataPoints({required int offsetInDegrees}) {
 
 See the [example](./example) for details.
 
-## TODO
-
-* wrapping legend should reduce space for chart, not exceed bounds
 ## License
 
 Copyright 2021 David Green
