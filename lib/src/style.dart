@@ -165,6 +165,7 @@ class AxisStyle {
   final Color lineColor;
   final double lineSize;
   final double? absoluteMin;
+  final double? clampedMin;
   final double? absoluteMax;
   final double? marginAbove;
   final double? marginBelow;
@@ -183,6 +184,7 @@ class AxisStyle {
       this.skipLastLabel = false,
       this.labelOnDatapoints = false,
       this.absoluteMin,
+      this.clampedMin,
       this.absoluteMax,
       this.marginAbove,
       this.marginBelow,
@@ -204,6 +206,7 @@ class AxisStyle {
       lineColor,
       lineSize,
       absoluteMin,
+      clampedMin,
       absoluteMax,
       marginAbove,
       marginBelow,
@@ -225,6 +228,7 @@ class AxisStyle {
       other.lineSize == lineSize &&
       other.absoluteMax == absoluteMax &&
       other.absoluteMin == absoluteMin &&
+      other.clampedMin == clampedMin &&
       other.marginAbove == marginAbove &&
       other.marginBelow == marginBelow &&
       other.minimumRange == minimumRange &&
@@ -243,6 +247,7 @@ class AxisStyle {
       Color? lineColor,
       double? lineSize,
       double? absoluteMin,
+      double? clampedMin,
       double? absoluteMax,
       double? marginAbove,
       double? marginBelow,
@@ -260,6 +265,7 @@ class AxisStyle {
         maxLabels: maxLabels ?? this.maxLabels,
         labelCount: labelCount ?? this.labelCount,
         absoluteMin: absoluteMin ?? this.absoluteMin,
+        clampedMin: clampedMin ?? this.clampedMin,
         absoluteMax: absoluteMax ?? this.absoluteMax,
         marginAbove: marginAbove ?? this.marginAbove,
         marginBelow: marginBelow ?? this.marginBelow,

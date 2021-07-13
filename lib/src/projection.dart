@@ -125,7 +125,7 @@ class _DatasetMetrics {
     _minY = _dataMinY().floorToDouble();
     _maxY = _dataMaxY().ceilToDouble();
     xRange = maxX - minX;
-    _yRange = _maxY - _minY;
+    _yRange = maxY.difference(minY);
     _applyMinimumRange();
   }
 
@@ -161,10 +161,7 @@ class _DatasetMetrics {
 
   void _applyMinimumRange() {
     final minimumRange = _axisStyle?.minimumRange;
-    if (minimumRange == null) {
-      return;
-    }
-    if (yRange < minimumRange) {
+    if (minimumRange != null && yRange < minimumRange) {
       final difference = minimumRange - yRange;
       final margin = difference / 2.0;
       _maxY = (maxY + margin).ceil().toDouble();
@@ -177,8 +174,12 @@ class _DatasetMetrics {
       if (absoluteMax != null && _maxY > absoluteMax) {
         _maxY = absoluteMax;
       }
-      _yRange = maxY.difference(minY);
     }
+    final clampedMin = _axisStyle?.clampedMin;
+    if (clampedMin != null && _minY < clampedMin) {
+      _minY = clampedMin;
+    }
+    _yRange = maxY.difference(minY);
   }
 
   ProjectionDatasetMetrics toProjectionDatasetMetrics() =>
