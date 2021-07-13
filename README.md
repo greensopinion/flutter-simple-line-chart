@@ -9,7 +9,7 @@ Provides a simple line chart. An opinionated library that focuses on API simplic
 * Legend
 * Highlighting
 
-<img src="https://github.com/greensopinion/flutter-simple-line-chart/blob/main/chart-example.png" width="50%">
+<img src="https://raw.githubusercontent.com/greensopinion/flutter-simple-line-chart/main/chart-example.png" width="50%">
 
 ## Usage
 
