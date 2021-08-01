@@ -7,7 +7,7 @@ import 'projection.dart';
 class SelectionModel extends ChangeNotifier {
   final LineChartStyle style;
   final LineChartData data;
-  final Size size;
+  Size _size;
   Projection? _projection;
   List<QualifiedDataPoint> _selection = [];
 
@@ -19,14 +19,21 @@ class SelectionModel extends ChangeNotifier {
     }
   }
 
+  set size(Size newSize) {
+    if (newSize != _size) {
+      _projection = null;
+      _size = newSize;
+    }
+  }
+
   Projection get projection {
     if (_projection == null) {
-      _projection = Projection(style, size, data);
+      _projection = Projection(style, _size, data);
     }
     return _projection!;
   }
 
-  SelectionModel(this.style, this.data, this.size);
+  SelectionModel(this.style, this.data, this._size);
 
   void onTapUp(Offset? localPosition) => _udpateSelection(localPosition);
 

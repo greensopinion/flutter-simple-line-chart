@@ -243,26 +243,29 @@ class _ChartAreaState extends State<_ChartArea> {
           widget.controller._selectionModel = _selectionModel;
           return _selectionModel!;
         },
-        builder: (context, child) => GestureDetector(
-            onTapUp: (details) =>
-                _selectionModel?.onTapUp(details.localPosition),
-            onHorizontalDragStart: (details) =>
-                _selectionModel?.onDrag(details.localPosition),
-            onHorizontalDragUpdate: (details) =>
-                _selectionModel?.onDrag(details.localPosition),
-            child: Container(
-              width: size.width,
-              height: size.height,
-              child: Stack(fit: StackFit.expand, children: [
-                LineChartGrid(
-                    style: (widget.style.topAxisStyle ??
-                        widget.style.bottomAxisStyle)!,
-                    xLabeller: widget.xLabeller,
-                    yLabeller: widget.yLabeller),
-                LineChartDataSeries(style: widget.style, data: widget.data),
-                LineChartSelection(),
-              ]),
-            )),
+        builder: (context, child) {
+          _selectionModel?.size = size;
+          return GestureDetector(
+              onTapUp: (details) =>
+                  _selectionModel?.onTapUp(details.localPosition),
+              onHorizontalDragStart: (details) =>
+                  _selectionModel?.onDrag(details.localPosition),
+              onHorizontalDragUpdate: (details) =>
+                  _selectionModel?.onDrag(details.localPosition),
+              child: Container(
+                width: size.width,
+                height: size.height,
+                child: Stack(fit: StackFit.expand, children: [
+                  LineChartGrid(
+                      style: (widget.style.topAxisStyle ??
+                          widget.style.bottomAxisStyle)!,
+                      xLabeller: widget.xLabeller,
+                      yLabeller: widget.yLabeller),
+                  LineChartDataSeries(style: widget.style, data: widget.data),
+                  LineChartSelection(),
+                ]),
+              ));
+        },
       );
     });
   }

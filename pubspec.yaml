@@ -1,6 +1,6 @@
 name: simple_line_chart
 description: Provides a simple line chart. An opinionated library that focuses on API simplicity.
-version: 1.0.1
+version: 1.0.2
 homepage: https://github.com/greensopinion/flutter-simple-line-chart
 
 environment:
