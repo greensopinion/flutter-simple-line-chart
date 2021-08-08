@@ -125,6 +125,24 @@ class LineChartStyle {
         highlightStyle: highlightStyle);
   }
 
+  /// Copies the style with the indicated axis removed.
+  /// pass true to remove the named axis.
+  LineChartStyle copyRemovingAxis(
+      {bool left = false,
+      bool right = false,
+      bool top = false,
+      bool bottom = false}) {
+    return LineChartStyle(
+        legendStyle: legendStyle,
+        datasetStyles: datasetStyles,
+        animationDuration: animationDuration,
+        bottomAxisStyle: bottom ? null : bottomAxisStyle,
+        leftAxisStyle: left ? null : leftAxisStyle,
+        rightAxisStyle: right ? null : rightAxisStyle,
+        topAxisStyle: top ? null : topAxisStyle,
+        highlightStyle: highlightStyle);
+  }
+
   @override
   int get hashCode => hashValues(
       legendStyle,
