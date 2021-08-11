@@ -1,4 +1,8 @@
 ## 1.0.3
+## 1.0.4
+
+* Avoid notifying listeners after being disposed.
+## 1.0.3
 
 * Provide API to remove an axis from LineChartStyle.
 ## 1.0.2

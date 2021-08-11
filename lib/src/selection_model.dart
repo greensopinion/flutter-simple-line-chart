@@ -7,6 +7,7 @@ import 'projection.dart';
 class SelectionModel extends ChangeNotifier {
   final LineChartStyle style;
   final LineChartData data;
+  bool _disposed = false;
   Size _size;
   Projection? _projection;
   List<QualifiedDataPoint> _selection = [];
@@ -45,5 +46,19 @@ class SelectionModel extends ChangeNotifier {
     } else {
       selection = projection.fromPixel(position: localPosition);
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _disposed = true;
+  }
+
+  @override
+  void notifyListeners() {
+    if (_disposed) {
+      return;
+    }
+    super.notifyListeners();
   }
 }
