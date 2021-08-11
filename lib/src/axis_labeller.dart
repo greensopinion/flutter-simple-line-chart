@@ -41,12 +41,14 @@ class AxisLabeller {
       axisDependency = YAxisDependency.LEFT;
       datasets = data.datasetsOf(axisDependency: axisDependency);
     }
-    if (datasets.isEmpty || datasets.first.dataPoints.length < 2) {
+    final dataSet = datasets.firstWhere((p) => p.dataPoints.length > 2,
+        orElse: () => datasets.first);
+    if (dataSet.dataPoints.length < 2) {
       return [];
     }
     final projection = Projection(style, Size(length, length), data);
     if (_labelPoints == null) {
-      final labels = _labelPainter(datasets.first.dataPoints).toList();
+      final labels = _labelPainter(dataSet.dataPoints).toList();
       final labelSize =
           labels.isEmpty ? 0 : labels.map((e) => _textSize(e)).reduce(max);
       final labelSizeWithSpacing = labelSize + spacing;
@@ -60,12 +62,11 @@ class AxisLabeller {
         double range = minX.difference(maxX);
         _labelPoints = <LabelPoint>[];
         if (axisStyle.labelOnDatapoints) {
-          final interval =
-              (datasets.first.dataPoints.length / labelCount).ceil();
-          datasets.first.dataPoints.asMap().forEach((index, point) {
+          final interval = (dataSet.dataPoints.length / labelCount).ceil();
+          dataSet.dataPoints.asMap().forEach((index, point) {
             if (index % interval == 0) {
               _labelPoints!.add(_createXaxisLabelPoint(
-                  projection, point, datasets.first.axisDependency));
+                  projection, point, dataSet.axisDependency));
             }
           });
         } else {
@@ -73,7 +74,7 @@ class AxisLabeller {
           if (interval > 0) {
             for (var labelX = minX; labelX <= maxX; labelX += interval) {
               _labelPoints!.add(_createXaxisLabelPoint(projection,
-                  DataPoint(x: labelX, y: 0), datasets.first.axisDependency));
+                  DataPoint(x: labelX, y: 0), dataSet.axisDependency));
             }
           }
         }
@@ -97,7 +98,7 @@ class AxisLabeller {
             final painter = _createPainter(text);
 
             final center = projection.toPixel(
-                axisDependency: datasets.first.axisDependency,
+                axisDependency: dataSet.axisDependency,
                 data: Offset(0, labelY));
             _labelPoints!.add(LabelPoint(text, painter.height, painter.width,
                 painter.height, center.dy));

@@ -28,11 +28,11 @@ class YAxis extends StatelessWidget {
   }
 
   Widget _createLabels(BuildContext context) {
-    if (data.datasets.isEmpty || data.datasets.first.dataPoints.length < 2) {
+    final labelPoints = labeller.labelPoints();
+    if (labelPoints.length < 2) {
       return Container(width: 10);
     }
     return LayoutBuilder(builder: (context, constraints) {
-      final labelPoints = labeller.labelPoints();
       final width = constraints.maxWidth;
       final children = labelPoints
           .map((p) => Positioned(

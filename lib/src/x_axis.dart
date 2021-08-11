@@ -24,10 +24,10 @@ class XAxis extends StatelessWidget {
   }
 
   Widget _createLabels(BuildContext context) {
-    if (data.datasets.isEmpty || data.datasets.first.dataPoints.length < 2) {
+    final labelPoints = labeller.labelPoints();
+    if (labelPoints.length < 2) {
       return Container(height: style.textStyle.height);
     }
-    final labelPoints = labeller.labelPoints();
     final children = labelPoints.map((p) {
       return Positioned(
           child: Text(p.text, style: style.textStyle),
