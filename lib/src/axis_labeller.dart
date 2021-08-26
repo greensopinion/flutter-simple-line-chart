@@ -70,7 +70,7 @@ class AxisLabeller {
             }
           });
         } else {
-          final interval = (range / labelCount);
+          final interval = range / labelCount;
           if (interval > 0) {
             for (var labelX = minX; labelX <= maxX; labelX += interval) {
               _labelPoints!.add(_createXaxisLabelPoint(projection,
@@ -83,7 +83,7 @@ class AxisLabeller {
             ? projection.leftMetrics()
             : projection.rightMetrics();
 
-        final interval = (metrics.rangeY / labelCount);
+        final interval = _applyIntervalConstraints(metrics.rangeY / labelCount);
         _labelPoints = <LabelPoint>[];
         if (interval > 0) {
           for (var labelY = metrics.minY;
@@ -128,6 +128,18 @@ class AxisLabeller {
         axisDependency: axisDependency, data: Offset(point.x, 0));
     return LabelPoint(text, painter.width + _textWidthCorrection,
         painter.width + _textWidthCorrection, painter.height, center.dx);
+  }
+
+  double _applyIntervalConstraints(double interval) {
+    final multiples = axisStyle.labelIncrementMultiples;
+    if (multiples != null) {
+      final remainderPart = interval % multiples;
+      if (remainderPart > 0) {
+        final wholePart = interval ~/ multiples;
+        return ((wholePart + 1) * multiples).toDouble();
+      }
+    }
+    return interval;
   }
 }
 

@@ -171,22 +171,68 @@ typedef LabelFunction = String Function(DataPoint);
 
 class AxisStyle {
   static final double defaultFontSize = _defaultFontSize;
+
+  /// the maximum number of labels to display
   final int maxLabels;
+
+  /// if specified, the number of labels to display
   final int? labelCount;
+
+  /// when true, the first label is not shown
   final bool skipFirstLabel;
+
+  /// when true, the last label is not shown
   final bool skipLastLabel;
+
+  /// when true, labels are shown exactly on datapoints instead of
+  /// at any interval.
   final bool labelOnDatapoints;
+
+  /// when specified, labels must be placed on values that are multiples
+  /// of the specified value. For example, [labelIncrementMultiples] = 1 would
+  /// meke labels appear on whole values only.
+  final int? labelIncrementMultiples;
+
+  /// the function that provides a text label from a data point value
   final LabelFunction labelProvider;
+
+  /// the style to use when rendering labels
   final TextStyle textStyle;
+
+  /// when false, labels are not shown
   final bool drawLabels;
+
+  /// insets to apply to the axis
   final EdgeInsets labelInsets;
+
+  /// the axis line color
   final Color lineColor;
+
+  /// the width of the axis line
   final double lineSize;
+
+  /// if specified, constrains the chart so that
+  /// the chart displays with this value as the lower bound.
   final double? absoluteMin;
+
+  /// if specified, constrains the minimum chart area value
+  /// when the [minimumRange] is applied.
   final double? clampedMin;
+
+  /// if specified, constrains the chart so that
+  /// the chart displays with this value as the upper bound.
   final double? absoluteMax;
+
+  /// the margin to apply above the maximum value on the chart,
+  /// in data point units.
   final double? marginAbove;
+
+  /// the margin to apply below the minimum value on the chart,
+  /// in data point units.
   final double? marginBelow;
+
+  /// the minimum range that values occupy on the chart regardless
+  /// of values in the series.
   final double? minimumRange;
 
   AxisStyle(
@@ -201,6 +247,7 @@ class AxisStyle {
       this.skipFirstLabel = false,
       this.skipLastLabel = false,
       this.labelOnDatapoints = false,
+      this.labelIncrementMultiples,
       this.absoluteMin,
       this.clampedMin,
       this.absoluteMax,
@@ -217,6 +264,7 @@ class AxisStyle {
       skipFirstLabel,
       skipLastLabel,
       labelOnDatapoints,
+      labelIncrementMultiples,
       labelProvider,
       textStyle,
       drawLabels,
@@ -238,6 +286,7 @@ class AxisStyle {
       other.skipFirstLabel == skipFirstLabel &&
       other.skipLastLabel == skipLastLabel &&
       other.labelOnDatapoints == labelOnDatapoints &&
+      other.labelIncrementMultiples == labelIncrementMultiples &&
       other.labelProvider == labelProvider &&
       other.textStyle == textStyle &&
       other.drawLabels == drawLabels &&
@@ -258,6 +307,7 @@ class AxisStyle {
       bool? skipFirstLabel,
       bool? skipLastLabel,
       bool? labelOnDatapoints,
+      int? labelIncrementMultiples,
       LabelFunction? labelProvider,
       TextStyle? textStyle,
       bool? drawLabels,
@@ -276,6 +326,8 @@ class AxisStyle {
         skipFirstLabel: skipFirstLabel ?? this.skipFirstLabel,
         skipLastLabel: skipLastLabel ?? this.skipLastLabel,
         labelOnDatapoints: labelOnDatapoints ?? this.labelOnDatapoints,
+        labelIncrementMultiples:
+            labelIncrementMultiples ?? this.labelIncrementMultiples,
         labelProvider: labelProvider ?? this.labelProvider,
         lineColor: lineColor ?? this.lineColor,
         lineSize: lineSize ?? this.lineSize,

@@ -166,14 +166,24 @@ class _DatasetMetrics {
       final margin = difference / 2.0;
       _maxY = (maxY + margin).ceil().toDouble();
       _minY = (minY - margin).floor().toDouble();
-      final absoluteMin = _axisStyle?.absoluteMin;
-      if (absoluteMin != null && _minY < absoluteMin) {
-        _minY = absoluteMin;
+    }
+    final intervalMultiple = _axisStyle?.labelIncrementMultiples;
+    if (intervalMultiple != null) {
+      final remainderPart = _minY % intervalMultiple;
+      if (remainderPart != 0) {
+        _minY = ((_minY ~/ intervalMultiple) * intervalMultiple).toDouble();
+        if (remainderPart < 0) {
+          _minY -= intervalMultiple;
+        }
       }
-      final absoluteMax = _axisStyle?.absoluteMax;
-      if (absoluteMax != null && _maxY > absoluteMax) {
-        _maxY = absoluteMax;
-      }
+    }
+    final absoluteMin = _axisStyle?.absoluteMin;
+    if (absoluteMin != null && _minY < absoluteMin) {
+      _minY = absoluteMin;
+    }
+    final absoluteMax = _axisStyle?.absoluteMax;
+    if (absoluteMax != null && _maxY > absoluteMax) {
+      _maxY = absoluteMax;
     }
     final clampedMin = _axisStyle?.clampedMin;
     if (clampedMin != null && _minY < clampedMin) {

@@ -1,3 +1,7 @@
+## 1.1.1
+
+* improve documentation
+* provide a way to round y axis numbers
 ## 1.1.0
 
 * Update dependencies
