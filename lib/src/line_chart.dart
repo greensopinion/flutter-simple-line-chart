@@ -7,6 +7,7 @@ import 'legend.dart';
 import 'line_chart_data_series.dart';
 import 'line_chart_grid.dart';
 import 'line_chart_selection.dart';
+import 'line_chart_selection_label.dart';
 import 'selection_model.dart';
 import 'style.dart';
 import 'text_painter.dart';
@@ -15,6 +16,7 @@ import 'y_axis.dart';
 
 class LineChartController {
   late final Function()? _onSelectionChanged;
+  List<QualifiedDataPoint> _previousSelection = [];
   SelectionModel? _selectionModel;
 
   LineChartController({Function()? onSelectionChanged}) {
@@ -33,7 +35,8 @@ class LineChartController {
 
   void _selectionChanged(List<QualifiedDataPoint> selection) {
     Function()? onChanged = _onSelectionChanged;
-    if (onChanged != null) {
+    if (onChanged != null && _previousSelection != selection) {
+      _previousSelection = selection.toList();
       onChanged();
     }
   }
@@ -232,6 +235,17 @@ class _ChartArea extends StatefulWidget {
 class _ChartAreaState extends State<_ChartArea> {
   SelectionModel? _selectionModel;
 
+  bool _showSelectionLabel = false;
+
+  bool get showSelectionLabel => _showSelectionLabel;
+  set showSelectionLabel(bool newShow) {
+    if (newShow != _showSelectionLabel) {
+      setState(() {
+        _showSelectionLabel = newShow;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
@@ -245,25 +259,43 @@ class _ChartAreaState extends State<_ChartArea> {
         },
         builder: (context, child) {
           _selectionModel?.size = size;
+          final children = [
+            LineChartGrid(
+                style: (widget.style.topAxisStyle ??
+                    widget.style.bottomAxisStyle)!,
+                xLabeller: widget.xLabeller,
+                yLabeller: widget.yLabeller),
+            LineChartDataSeries(style: widget.style, data: widget.data),
+            LineChartSelection(),
+          ];
+          if (_showSelectionLabel &&
+              widget.style.selectionLabelStyle != null &&
+              (_selectionModel?.selection.isNotEmpty ?? false)) {
+            children.add(Positioned(
+                top: 8,
+                left: 8,
+                child: LineChartSelectionLabel(widget.data, widget.style)));
+          }
           return GestureDetector(
-              onTapUp: (details) =>
-                  _selectionModel?.onTapUp(details.localPosition),
-              onHorizontalDragStart: (details) =>
-                  _selectionModel?.onDrag(details.localPosition),
+              onTapDown: (details) {
+                _selectionModel?.onTapDown(details.localPosition);
+                showSelectionLabel = true;
+              },
+              onTapUp: (details) {
+                _selectionModel?.onTapUp(details.localPosition);
+                showSelectionLabel = false;
+              },
+              onHorizontalDragStart: (details) {
+                _selectionModel?.onDrag(details.localPosition);
+                showSelectionLabel = true;
+              },
               onHorizontalDragUpdate: (details) =>
                   _selectionModel?.onDrag(details.localPosition),
+              onHorizontalDragEnd: (details) => showSelectionLabel = false,
               child: Container(
                 width: size.width,
                 height: size.height,
-                child: Stack(fit: StackFit.expand, children: [
-                  LineChartGrid(
-                      style: (widget.style.topAxisStyle ??
-                          widget.style.bottomAxisStyle)!,
-                      xLabeller: widget.xLabeller,
-                      yLabeller: widget.yLabeller),
-                  LineChartDataSeries(style: widget.style, data: widget.data),
-                  LineChartSelection(),
-                ]),
+                child: Stack(fit: StackFit.expand, children: children),
               ));
         },
       );

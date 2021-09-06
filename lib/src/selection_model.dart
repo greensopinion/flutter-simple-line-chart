@@ -37,6 +37,7 @@ class SelectionModel extends ChangeNotifier {
   SelectionModel(this.style, this.data, this._size);
 
   void onTapUp(Offset? localPosition) => _udpateSelection(localPosition);
+  void onTapDown(Offset? localPosition) => _udpateSelection(localPosition);
 
   onDrag(Offset? localPosition) => _udpateSelection(localPosition);
 

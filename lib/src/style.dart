@@ -11,7 +11,15 @@ class LineChartStyle {
   final AxisStyle? bottomAxisStyle;
   final AxisStyle? leftAxisStyle;
   final AxisStyle? rightAxisStyle;
+
+  /// the selection label style, which when specified enables a data label
+  /// when the chart is touched
+  final SelectionLabelStyle? selectionLabelStyle;
+
+  /// the duration of animations when rendering the chart
   final Duration? animationDuration;
+
+  /// the style of the selection highlight
   late final HighlightStyle? highlightStyle;
 
   LineChartStyle(
@@ -22,6 +30,7 @@ class LineChartStyle {
       this.leftAxisStyle,
       this.rightAxisStyle,
       this.highlightStyle,
+      this.selectionLabelStyle,
       this.animationDuration = const Duration(seconds: 1)}) {
     assert(topAxisStyle != null || bottomAxisStyle != null);
     assert(leftAxisStyle != null || rightAxisStyle != null);
@@ -39,10 +48,17 @@ class LineChartStyle {
     final legendInsets = EdgeInsets.only(top: fontHeight / 2);
     final highlight =
         HighlightStyle(color: _Colors.highlight, lineSize: _defaultLineSize);
+    final selectionLabelStyle = SelectionLabelStyle(
+      borderColor: lineColor,
+      textStyle: textStyle,
+      xAxisLabelProvider: (point) => _defaultLabelProvider(point.x),
+      leftYAxisLabelProvider: (point) => _defaultLabelProvider(point.y),
+      rightYAxisLabelProvider: (point) => _defaultLabelProvider(point.y),
+    );
 
     return LineChartStyle(
         legendStyle: LegendStyle(
-            lineColor: lineColor, textStyle: textStyle, insets: legendInsets),
+            borderColor: lineColor, textStyle: textStyle, insets: legendInsets),
         datasetStyles: datasetStyles,
         highlightStyle: highlight,
         topAxisStyle: AxisStyle(
@@ -64,7 +80,8 @@ class LineChartStyle {
             textStyle: textStyle,
             labelInsets: EdgeInsets.only(left: fontHeight / 2),
             labelProvider: (point) => _defaultLabelProvider(point.y),
-            lineColor: lineColor));
+            lineColor: lineColor),
+        selectionLabelStyle: selectionLabelStyle);
   }
 
   DatasetStyle datasetStyleOfIndex(int index) {
@@ -81,6 +98,7 @@ class LineChartStyle {
       AxisStyle? bottomAxisStyle,
       AxisStyle? leftAxisStyle,
       AxisStyle? rightAxisStyle,
+      SelectionLabelStyle? selectionLabelStyle,
       Duration? animationDuration,
       HighlightStyle? highlightStyle}) {
     return LineChartStyle(
@@ -91,6 +109,7 @@ class LineChartStyle {
         leftAxisStyle: leftAxisStyle ?? this.leftAxisStyle,
         rightAxisStyle: rightAxisStyle ?? this.rightAxisStyle,
         topAxisStyle: topAxisStyle ?? this.topAxisStyle,
+        selectionLabelStyle: selectionLabelStyle ?? this.selectionLabelStyle,
         highlightStyle: highlightStyle ?? this.highlightStyle);
   }
 
@@ -110,18 +129,32 @@ class LineChartStyle {
         leftAxisStyle: leftAxisStyle,
         rightAxisStyle: rightAxisStyle,
         topAxisStyle: topAxisStyle,
+        selectionLabelStyle: selectionLabelStyle,
         highlightStyle: highlightStyle);
   }
 
   LineChartStyle copyWithoutLegend() {
+    return copyRemoving(legend: true);
+  }
+
+  /// Copies the style with the indicated elements removed.
+  /// pass true to remove elements
+  LineChartStyle copyRemoving(
+      {legend = false,
+      selectionLabel = false,
+      bottomAxis = false,
+      topAxis = false,
+      leftAxis = false,
+      rightAxis = false}) {
     return LineChartStyle(
-        legendStyle: null,
+        legendStyle: legend ? null : legendStyle,
         datasetStyles: datasetStyles,
         animationDuration: animationDuration,
-        bottomAxisStyle: bottomAxisStyle,
-        leftAxisStyle: leftAxisStyle,
-        rightAxisStyle: rightAxisStyle,
-        topAxisStyle: topAxisStyle,
+        bottomAxisStyle: bottomAxis ? null : bottomAxisStyle,
+        leftAxisStyle: leftAxis ? null : leftAxisStyle,
+        rightAxisStyle: rightAxis ? null : rightAxisStyle,
+        topAxisStyle: topAxis ? null : topAxisStyle,
+        selectionLabelStyle: selectionLabel ? null : selectionLabelStyle,
         highlightStyle: highlightStyle);
   }
 
@@ -132,15 +165,8 @@ class LineChartStyle {
       bool right = false,
       bool top = false,
       bool bottom = false}) {
-    return LineChartStyle(
-        legendStyle: legendStyle,
-        datasetStyles: datasetStyles,
-        animationDuration: animationDuration,
-        bottomAxisStyle: bottom ? null : bottomAxisStyle,
-        leftAxisStyle: left ? null : leftAxisStyle,
-        rightAxisStyle: right ? null : rightAxisStyle,
-        topAxisStyle: top ? null : topAxisStyle,
-        highlightStyle: highlightStyle);
+    return copyRemoving(
+        leftAxis: left, rightAxis: right, topAxis: top, bottomAxis: bottom);
   }
 
   @override
@@ -152,6 +178,7 @@ class LineChartStyle {
       leftAxisStyle,
       rightAxisStyle,
       animationDuration,
+      selectionLabelStyle,
       highlightStyle);
 
   @override
@@ -163,6 +190,7 @@ class LineChartStyle {
       other.bottomAxisStyle == bottomAxisStyle &&
       other.leftAxisStyle == leftAxisStyle &&
       other.rightAxisStyle == rightAxisStyle &&
+      other.selectionLabelStyle == selectionLabelStyle &&
       other.animationDuration == animationDuration &&
       other.highlightStyle == highlightStyle;
 }
@@ -345,35 +373,110 @@ class AxisStyle {
 
 class LegendStyle {
   static final double defaultFontSize = _defaultFontSize;
-  final Color lineColor;
+  final Color borderColor;
   final TextStyle textStyle;
   final EdgeInsets insets;
   final borderSize = 1.0;
 
   LegendStyle(
-      {required this.lineColor, required this.textStyle, required this.insets});
+      {required this.borderColor,
+      required this.textStyle,
+      required this.insets});
 
   double get fontSize => textStyle.fontSize ?? defaultFontSize;
   double get heightInsets => insets.top + insets.bottom + (borderSize * 2);
 
   LegendStyle copyWith(
-      {Color? lineColor, TextStyle? textStyle, EdgeInsets? insets}) {
+      {Color? borderColor, TextStyle? textStyle, EdgeInsets? insets}) {
     return LegendStyle(
-        lineColor: lineColor ?? this.lineColor,
+        borderColor: borderColor ?? this.borderColor,
         textStyle: textStyle ?? this.textStyle,
         insets: insets ?? this.insets);
   }
 
   @override
-  int get hashCode => hashValues(lineColor, textStyle, insets, borderSize);
+  int get hashCode => hashValues(borderColor, textStyle, insets, borderSize);
 
   @override
   bool operator ==(Object other) =>
       other is LegendStyle &&
       other.borderSize == borderSize &&
-      other.lineColor == lineColor &&
+      other.borderColor == borderColor &&
       other.insets == insets &&
       other.textStyle == textStyle;
+}
+
+/// a style for rendering a selection label
+class SelectionLabelStyle {
+  /// the function that provides a text label from a data point value
+  /// for data points that have [YAxisDependency.LEFT]
+  final LabelFunction? leftYAxisLabelProvider;
+
+  /// the function that provides a text label from a data point value
+  /// for data points that have [YAxisDependency.RIGHT]
+  final LabelFunction? rightYAxisLabelProvider;
+
+  /// the function that provides a text label from a data point value
+  /// for the x axis
+  final LabelFunction? xAxisLabelProvider;
+
+  /// the text style of the selection label
+  final TextStyle textStyle;
+
+  /// the border line color
+  final Color borderColor;
+
+  /// the width of the border line
+  final borderSize = 1.0;
+
+  SelectionLabelStyle(
+      {this.leftYAxisLabelProvider,
+      this.rightYAxisLabelProvider,
+      this.xAxisLabelProvider,
+      required this.textStyle,
+      required this.borderColor});
+
+  SelectionLabelStyle copyWith(
+      {LabelFunction? leftYAxisLabelProvider,
+      LabelFunction? rightYAxisLabelProvider,
+      LabelFunction? xAxisLabelProvider,
+      TextStyle? textStyle,
+      Color? borderColor}) {
+    return SelectionLabelStyle(
+      leftYAxisLabelProvider:
+          leftYAxisLabelProvider ?? this.leftYAxisLabelProvider,
+      rightYAxisLabelProvider:
+          rightYAxisLabelProvider ?? this.rightYAxisLabelProvider,
+      xAxisLabelProvider: xAxisLabelProvider ?? this.xAxisLabelProvider,
+      textStyle: textStyle ?? this.textStyle,
+      borderColor: borderColor ?? this.borderColor,
+    );
+  }
+
+  /// provides a copy of the style removing the specified elements
+  SelectionLabelStyle copyRemoving(
+      {leftAxisLabel = false, rightAxisLabel = false, xAxisLabel = false}) {
+    return SelectionLabelStyle(
+        leftYAxisLabelProvider: leftAxisLabel ? null : leftYAxisLabelProvider,
+        rightYAxisLabelProvider:
+            rightAxisLabel ? null : rightYAxisLabelProvider,
+        xAxisLabelProvider: xAxisLabel ? null : xAxisLabelProvider,
+        textStyle: textStyle,
+        borderColor: borderColor);
+  }
+
+  @override
+  int get hashCode => hashValues(borderColor, borderSize, xAxisLabelProvider,
+      rightYAxisLabelProvider, leftYAxisLabelProvider);
+
+  @override
+  bool operator ==(Object other) =>
+      other is SelectionLabelStyle &&
+      other.borderSize == borderSize &&
+      other.borderColor == borderColor &&
+      other.xAxisLabelProvider == xAxisLabelProvider &&
+      other.rightYAxisLabelProvider == rightYAxisLabelProvider &&
+      other.leftYAxisLabelProvider == leftYAxisLabelProvider;
 }
 
 class DatasetStyle {

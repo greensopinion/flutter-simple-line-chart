@@ -1,3 +1,7 @@
+## 1.2.0
+
+* add data labels for selection on touch
+
 ## 1.1.1
 
 * improve documentation

@@ -61,13 +61,16 @@ enum YAxisDependency { LEFT, RIGHT }
 
 class Dataset {
   final String label;
+  final String shortLabel;
   final YAxisDependency axisDependency;
   final List<DataPoint> dataPoints;
 
   Dataset(
       {required this.label,
+      String? shortLabel,
       this.axisDependency = YAxisDependency.LEFT,
-      required this.dataPoints});
+      required this.dataPoints})
+      : this.shortLabel = shortLabel ?? label;
 
   double get maxY =>
       dataPoints.isEmpty ? 0 : dataPoints.map((e) => e.y).reduce(max);
@@ -79,17 +82,18 @@ class Dataset {
       dataPoints.isEmpty ? 0 : dataPoints.map((e) => e.x).reduce(min);
 
   @override
-  int get hashCode => hashValues(label, dataPoints);
+  int get hashCode => hashValues(label, shortLabel, dataPoints);
 
   @override
   bool operator ==(Object other) =>
       other is Dataset &&
       other.label == label &&
+      other.shortLabel == shortLabel &&
       other.dataPoints == dataPoints;
 
   @override
   String toString() =>
-      'Dataset(label=$label,dataPoints=[${dataPoints.length}])';
+      'Dataset(label=$label,shortLabel=$shortLabel,dataPoints=[${dataPoints.length}])';
 }
 
 class DataPoint {
