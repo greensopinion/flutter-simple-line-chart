@@ -16,7 +16,7 @@ class LineChartSelectionLabel extends StatelessWidget {
       final selectionStyle = style.selectionLabelStyle!;
       final children = <Widget>[];
       final xLabelProvider = selectionStyle.xAxisLabelProvider;
-      if (xLabelProvider != null) {
+      if (xLabelProvider != null && selectionModel.selection.isNotEmpty) {
         final point = selectionModel.selection.first;
         children.add(Text(xLabelProvider(point.dataPoint),
             style: style.selectionLabelStyle!.textStyle));

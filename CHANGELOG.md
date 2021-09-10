@@ -1,3 +1,6 @@
+## 1.2.1
+
+* fix issue when selection is empty
 ## 1.2.0
 
 * add data labels for selection on touch
