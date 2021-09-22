@@ -308,7 +308,8 @@ class _ChartAreaState extends State<_ChartArea> {
     if (oldWidget.data != widget.data ||
         oldWidget.style != widget.style ||
         oldWidget.xLabeller != widget.xLabeller ||
-        oldWidget.yLabeller != widget.yLabeller) {
+        oldWidget.yLabeller != widget.yLabeller ||
+        oldWidget.controller != widget.controller) {
       setState(() {});
     }
   }

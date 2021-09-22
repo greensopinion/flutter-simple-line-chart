@@ -1,3 +1,6 @@
+## 1.2.2
+
+* fix issue where new controller wouldn't get selection initialized
 ## 1.2.1
 
 * fix issue when selection is empty
