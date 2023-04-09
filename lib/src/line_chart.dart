@@ -9,7 +9,6 @@ import 'line_chart_grid.dart';
 import 'line_chart_selection.dart';
 import 'line_chart_selection_label.dart';
 import 'selection_model.dart';
-import 'style.dart';
 import 'text_painter.dart';
 import 'x_axis.dart';
 import 'y_axis.dart';

@@ -82,7 +82,7 @@ class Dataset {
       dataPoints.isEmpty ? 0 : dataPoints.map((e) => e.x).reduce(min);
 
   @override
-  int get hashCode => hashValues(label, shortLabel, dataPoints);
+  int get hashCode => Object.hash(label, shortLabel, dataPoints);
 
   @override
   bool operator ==(Object other) =>
@@ -106,7 +106,7 @@ class DataPoint {
   Offset toOffset() => Offset(x, y);
 
   @override
-  int get hashCode => hashValues(x, y, model);
+  int get hashCode => Object.hash(x, y, model);
 
   @override
   bool operator ==(Object other) =>

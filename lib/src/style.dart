@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 
 import 'line_chart_data.dart';
 import 'text_painter.dart';
@@ -170,9 +169,9 @@ class LineChartStyle {
   }
 
   @override
-  int get hashCode => hashValues(
+  int get hashCode => Object.hash(
       legendStyle,
-      hashList(datasetStyles),
+      Object.hashAll(datasetStyles),
       topAxisStyle,
       bottomAxisStyle,
       leftAxisStyle,
@@ -292,7 +291,7 @@ class AxisStyle {
   double get fontSize => textStyle.fontSize ?? defaultFontSize;
 
   @override
-  int get hashCode => hashValues(
+  int get hashCode => Object.hash(
       maxLabels,
       labelCount,
       skipFirstLabel,
@@ -405,7 +404,7 @@ class LegendStyle {
   }
 
   @override
-  int get hashCode => hashValues(borderColor, textStyle, insets, borderSize);
+  int get hashCode => Object.hash(borderColor, textStyle, insets, borderSize);
 
   @override
   bool operator ==(Object other) =>
@@ -476,7 +475,7 @@ class SelectionLabelStyle {
   }
 
   @override
-  int get hashCode => hashValues(borderColor, borderSize, xAxisLabelProvider,
+  int get hashCode => Object.hash(borderColor, borderSize, xAxisLabelProvider,
       rightYAxisLabelProvider, leftYAxisLabelProvider);
 
   @override
@@ -515,7 +514,7 @@ class DatasetStyle {
   }
 
   @override
-  int get hashCode => hashValues(color, lineSize, fillOpacity, cubicIntensity);
+  int get hashCode => Object.hash(color, lineSize, fillOpacity, cubicIntensity);
 
   @override
   bool operator ==(Object other) =>
@@ -548,7 +547,7 @@ class HighlightStyle {
   }
 
   @override
-  int get hashCode => hashValues(color, lineSize, vertical, horizontal);
+  int get hashCode => Object.hash(color, lineSize, vertical, horizontal);
 
   @override
   bool operator ==(Object other) =>
