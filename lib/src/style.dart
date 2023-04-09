@@ -196,6 +196,7 @@ class LineChartStyle {
 }
 
 typedef LabelFunction = String Function(DataPoint);
+typedef AxisValuePredicate = bool Function(double axisValue);
 
 class AxisStyle {
   static final double defaultFontSize = _defaultFontSize;
@@ -259,6 +260,10 @@ class AxisStyle {
   /// in data point units.
   final double? marginBelow;
 
+  /// indicates whether to apply the [marginBelow] based on the minimum Y value
+  /// in data point units.
+  final AxisValuePredicate? applyMarginBelow;
+
   /// the minimum range that values occupy on the chart regardless
   /// of values in the series.
   final double? minimumRange;
@@ -281,6 +286,7 @@ class AxisStyle {
       this.absoluteMax,
       this.marginAbove,
       this.marginBelow,
+      this.applyMarginBelow,
       this.minimumRange});
 
   double get fontSize => textStyle.fontSize ?? defaultFontSize;
@@ -304,6 +310,7 @@ class AxisStyle {
       absoluteMax,
       marginAbove,
       marginBelow,
+      applyMarginBelow,
       minimumRange);
 
   @override
@@ -327,6 +334,7 @@ class AxisStyle {
       other.marginAbove == marginAbove &&
       other.marginBelow == marginBelow &&
       other.minimumRange == minimumRange &&
+      other.applyMarginBelow == applyMarginBelow &&
       other.textStyle == textStyle;
 
   AxisStyle copyWith(
@@ -347,6 +355,7 @@ class AxisStyle {
       double? absoluteMax,
       double? marginAbove,
       double? marginBelow,
+      AxisValuePredicate? applyMarginBelow,
       double? minimumRange}) {
     return AxisStyle(
         textStyle: textStyle ?? this.textStyle,
@@ -367,6 +376,7 @@ class AxisStyle {
         absoluteMax: absoluteMax ?? this.absoluteMax,
         marginAbove: marginAbove ?? this.marginAbove,
         marginBelow: marginBelow ?? this.marginBelow,
+        applyMarginBelow: applyMarginBelow ?? this.applyMarginBelow,
         minimumRange: minimumRange ?? this.minimumRange);
   }
 }

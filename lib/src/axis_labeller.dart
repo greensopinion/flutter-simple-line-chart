@@ -60,7 +60,7 @@ class AxisLabeller {
         double minX = data.datasets.minX();
         double maxX = data.datasets.maxX();
         double range = minX.difference(maxX);
-        _labelPoints = <LabelPoint>[];
+        final labelPoints = <LabelPoint>[];
         if (axisStyle.labelOnDatapoints) {
           final interval = (dataSet.dataPoints.length / labelCount).ceil();
           dataSet.dataPoints.asMap().forEach((index, point) {
@@ -73,37 +73,64 @@ class AxisLabeller {
           final interval = range / labelCount;
           if (interval > 0) {
             for (var labelX = minX; labelX <= maxX; labelX += interval) {
-              _labelPoints!.add(_createXaxisLabelPoint(projection,
+              labelPoints.add(_createXaxisLabelPoint(projection,
                   DataPoint(x: labelX, y: 0), dataSet.axisDependency));
             }
           }
         }
+        _labelPoints = labelPoints;
       } else {
         final metrics = axisDependency == YAxisDependency.LEFT
             ? projection.leftMetrics()
             : projection.rightMetrics();
 
         final interval = _applyIntervalConstraints(metrics.rangeY / labelCount);
-        _labelPoints = <LabelPoint>[];
+        final labelPoints = <LabelPoint>[];
         if (interval > 0) {
-          for (var labelY = metrics.minY;
-              labelY <= metrics.maxY;
-              labelY += interval) {
-            if ((axisStyle.skipFirstLabel && labelY == metrics.minY) ||
-                (axisStyle.skipLastLabel &&
-                    (labelY + interval) > metrics.maxY)) {
-              continue;
+          List<double> labelValues = [];
+          if (metrics.minY < 0 && metrics.maxY > 0) {
+            for (var labelY = 0.0; labelY >= metrics.minY; labelY -= interval) {
+              labelValues.insert(0, labelY);
             }
+            for (var labelY = interval;
+                labelY <= metrics.maxY;
+                labelY += interval) {
+              labelValues.add(labelY);
+            }
+            if (axisStyle.skipFirstLabel &&
+                labelValues.isNotEmpty &&
+                labelValues.first == metrics.minY) {
+              labelValues.remove(0);
+            }
+            if (axisStyle.skipLastLabel &&
+                labelValues.isNotEmpty &&
+                labelValues.last == metrics.maxY) {
+              labelValues.removeLast();
+            }
+          } else {
+            for (var labelY = metrics.minY;
+                labelY <= metrics.maxY;
+                labelY += interval) {
+              if ((axisStyle.skipFirstLabel && labelY == metrics.minY) ||
+                  (axisStyle.skipLastLabel &&
+                      (labelY + interval) > metrics.maxY)) {
+                continue;
+              }
+              labelValues.add(labelY);
+            }
+          }
+          for (var labelY in labelValues) {
             final text = axisStyle.labelProvider(DataPoint(x: 0, y: labelY));
             final painter = _createPainter(text);
 
             final center = projection.toPixel(
                 axisDependency: dataSet.axisDependency,
                 data: Offset(0, labelY));
-            _labelPoints!.add(LabelPoint(text, painter.height, painter.width,
+            labelPoints.add(LabelPoint(text, painter.height, painter.width,
                 painter.height, center.dy));
           }
         }
+        _labelPoints = labelPoints;
       }
     }
     return _labelPoints!;
