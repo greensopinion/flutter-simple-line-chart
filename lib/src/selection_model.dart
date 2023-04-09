@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../simple_line_chart.dart';
-import 'line_chart_data.dart';
 import 'projection.dart';
 
 class SelectionModel extends ChangeNotifier {

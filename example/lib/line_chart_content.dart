@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:simple_line_chart/simple_line_chart.dart';
 
 class LineChartContent extends StatefulWidget {
+  const LineChartContent({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return _LineChartContentState();
@@ -30,12 +32,20 @@ class _LineChartContentState extends State<LineChartContent> {
 
   @override
   Widget build(BuildContext context) {
+    final template = LineChartStyle.fromTheme(context);
+    final style = template.copyRemoving(legend: true).copyWithAxes(
+        topAxisStyle: template.topAxisStyle,
+        leftAxisStyle: template.leftAxisStyle?.copyWith(
+            labelIncrementMultiples: 100,
+            marginAbove: 10,
+            marginBelow: 10,
+            applyMarginBelow: (minY) => minY < 0.0));
     return Column(children: [
       Padding(
-          padding: EdgeInsets.only(top: 20),
+          padding: const EdgeInsets.only(top: 20),
           child: LineChart(
               // chart is styled
-              style: LineChartStyle.fromTheme(context),
+              style: style,
               seriesHeight: 300,
               // chart has data
               data: data))
@@ -47,11 +57,12 @@ class _LineChartContentState extends State<LineChartContent> {
 // but you can plot any data you like
 List<DataPoint> _createDataPoints({required int offsetInDegrees}) {
   List<DataPoint> dataPoints = [];
-  final degreesToRadians = (pi / 180);
+  const degreesToRadians = (pi / 180);
   for (int x = 0; x < 180; x += 20) {
     final di = (x * 2).toDouble() * degreesToRadians;
     dataPoints.add(DataPoint(
-        x: x.toDouble(), y: 100.0 * ((sin(di + offsetInDegrees) + 1.0) / 2.0)));
+        x: x.toDouble(),
+        y: (100.0 * ((sin(di + offsetInDegrees) + 1.0) / 2.0))));
   }
   return dataPoints;
 }

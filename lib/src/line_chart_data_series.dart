@@ -164,10 +164,25 @@ class _LineChartDataSeriesPainter extends CustomPainter {
     final first = projection.toPixel(
         axisDependency: dataset.axisDependency,
         data: dataset.dataPoints.first.toOffset());
-    final fillLine = projection.toPixel(
-        axisDependency: dataset.axisDependency, data: Offset(0, 0));
-    path.lineTo(last.dx, fillLine.dy);
-    path.lineTo(first.dx, fillLine.dy);
+    if (datasetStyle.fillBaseline == DatasetFillBaseline.ZERO) {
+      final fillLine = projection.toPixel(
+          axisDependency: dataset.axisDependency, data: Offset(0, 0));
+      path.lineTo(last.dx, fillLine.dy);
+      path.lineTo(first.dx, fillLine.dy);
+    } else if (datasetStyle.fillBaseline == DatasetFillBaseline.MIN_VALUE) {
+      double minY;
+      if (dataset.axisDependency == YAxisDependency.LEFT) {
+        minY = projection.leftMetrics().minY;
+      } else {
+        minY = projection.rightMetrics().minY;
+      }
+      final fillLine = projection.toPixel(
+          axisDependency: dataset.axisDependency, data: Offset(0, minY));
+      path.lineTo(last.dx, fillLine.dy);
+      path.lineTo(first.dx, fillLine.dy);
+    } else {
+      throw 'Not implemented: ${datasetStyle.fillBaseline}';
+    }
     path.close();
 
     final fillPaint = Paint()

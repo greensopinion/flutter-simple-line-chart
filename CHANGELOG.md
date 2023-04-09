@@ -1,3 +1,9 @@
+## 1.3.0
+
+* improve labelling above/below zero
+* introduce `applyMarginBelow` predicate for controlling `marginBelow` on `AxisStyle`
+* introduce `fillBaseline` to `DatasetStyle` to control baseline for filling datasets
+
 ## 1.2.2
 
 * fix issue where new controller wouldn't get selection initialized

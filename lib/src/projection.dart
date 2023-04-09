@@ -136,7 +136,8 @@ class _DatasetMetrics {
     }
     var min = data.minY(axisDependency);
     final valueMargin = _axisStyle?.marginBelow;
-    if (valueMargin != null) {
+    if (valueMargin != null &&
+        (_axisStyle?.applyMarginBelow?.call(min) ?? true)) {
       min -= valueMargin;
     }
     return min;
@@ -160,6 +161,7 @@ class _DatasetMetrics {
       : style.rightAxisStyle;
 
   void _applyMinimumRange() {
+    final dataMinY = _minY;
     final minimumRange = _axisStyle?.minimumRange;
     if (minimumRange != null && yRange < minimumRange) {
       final difference = minimumRange - yRange;
@@ -171,10 +173,8 @@ class _DatasetMetrics {
     if (intervalMultiple != null) {
       final remainderPart = _minY % intervalMultiple;
       if (remainderPart != 0) {
-        _minY = ((_minY ~/ intervalMultiple) * intervalMultiple).toDouble();
-        if (remainderPart < 0) {
-          _minY -= intervalMultiple;
-        }
+        var minY = ((_minY ~/ intervalMultiple) * intervalMultiple).toDouble();
+        _minY = min(minY, dataMinY);
       }
     }
     final absoluteMin = _axisStyle?.absoluteMin;

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 
 import 'line_chart_data.dart';
 import 'text_painter.dart';
@@ -170,9 +169,9 @@ class LineChartStyle {
   }
 
   @override
-  int get hashCode => hashValues(
+  int get hashCode => Object.hash(
       legendStyle,
-      hashList(datasetStyles),
+      Object.hashAll(datasetStyles),
       topAxisStyle,
       bottomAxisStyle,
       leftAxisStyle,
@@ -196,6 +195,7 @@ class LineChartStyle {
 }
 
 typedef LabelFunction = String Function(DataPoint);
+typedef AxisValuePredicate = bool Function(double axisValue);
 
 class AxisStyle {
   static final double defaultFontSize = _defaultFontSize;
@@ -259,6 +259,10 @@ class AxisStyle {
   /// in data point units.
   final double? marginBelow;
 
+  /// indicates whether to apply the [marginBelow] based on the minimum Y value
+  /// in data point units.
+  final AxisValuePredicate? applyMarginBelow;
+
   /// the minimum range that values occupy on the chart regardless
   /// of values in the series.
   final double? minimumRange;
@@ -281,12 +285,13 @@ class AxisStyle {
       this.absoluteMax,
       this.marginAbove,
       this.marginBelow,
+      this.applyMarginBelow,
       this.minimumRange});
 
   double get fontSize => textStyle.fontSize ?? defaultFontSize;
 
   @override
-  int get hashCode => hashValues(
+  int get hashCode => Object.hash(
       maxLabels,
       labelCount,
       skipFirstLabel,
@@ -304,6 +309,7 @@ class AxisStyle {
       absoluteMax,
       marginAbove,
       marginBelow,
+      applyMarginBelow,
       minimumRange);
 
   @override
@@ -327,6 +333,7 @@ class AxisStyle {
       other.marginAbove == marginAbove &&
       other.marginBelow == marginBelow &&
       other.minimumRange == minimumRange &&
+      other.applyMarginBelow == applyMarginBelow &&
       other.textStyle == textStyle;
 
   AxisStyle copyWith(
@@ -347,6 +354,7 @@ class AxisStyle {
       double? absoluteMax,
       double? marginAbove,
       double? marginBelow,
+      AxisValuePredicate? applyMarginBelow,
       double? minimumRange}) {
     return AxisStyle(
         textStyle: textStyle ?? this.textStyle,
@@ -367,6 +375,7 @@ class AxisStyle {
         absoluteMax: absoluteMax ?? this.absoluteMax,
         marginAbove: marginAbove ?? this.marginAbove,
         marginBelow: marginBelow ?? this.marginBelow,
+        applyMarginBelow: applyMarginBelow ?? this.applyMarginBelow,
         minimumRange: minimumRange ?? this.minimumRange);
   }
 }
@@ -395,7 +404,7 @@ class LegendStyle {
   }
 
   @override
-  int get hashCode => hashValues(borderColor, textStyle, insets, borderSize);
+  int get hashCode => Object.hash(borderColor, textStyle, insets, borderSize);
 
   @override
   bool operator ==(Object other) =>
@@ -466,7 +475,7 @@ class SelectionLabelStyle {
   }
 
   @override
-  int get hashCode => hashValues(borderColor, borderSize, xAxisLabelProvider,
+  int get hashCode => Object.hash(borderColor, borderSize, xAxisLabelProvider,
       rightYAxisLabelProvider, leftYAxisLabelProvider);
 
   @override
@@ -479,6 +488,8 @@ class SelectionLabelStyle {
       other.leftYAxisLabelProvider == leftYAxisLabelProvider;
 }
 
+enum DatasetFillBaseline { ZERO, MIN_VALUE }
+
 class DatasetStyle {
   static const double defaultLineSize = _defaultLineSize;
   final Color color;
@@ -486,26 +497,34 @@ class DatasetStyle {
   final double lineSize;
   final double cubicIntensity;
 
+  /// Determines whether fill should fill to 0 on the Y axis or the minimum value
+  /// displayed in the chart.
+  final DatasetFillBaseline fillBaseline;
+
   DatasetStyle(
       {required this.color,
       this.fillOpacity = 0.25,
+      this.fillBaseline = DatasetFillBaseline.ZERO,
       this.lineSize = defaultLineSize,
       this.cubicIntensity = 0.2});
 
   DatasetStyle copyWith(
       {Color? color,
       double? fillOpacity,
+      DatasetFillBaseline? fillBaseline,
       double? lineSize,
       double? cubicIntensity}) {
     return DatasetStyle(
         color: color ?? this.color,
         fillOpacity: fillOpacity ?? this.fillOpacity,
+        fillBaseline: fillBaseline ?? this.fillBaseline,
         lineSize: lineSize ?? this.lineSize,
         cubicIntensity: cubicIntensity ?? this.cubicIntensity);
   }
 
   @override
-  int get hashCode => hashValues(color, lineSize, fillOpacity, cubicIntensity);
+  int get hashCode =>
+      Object.hash(color, lineSize, fillOpacity, fillBaseline, cubicIntensity);
 
   @override
   bool operator ==(Object other) =>
@@ -513,6 +532,7 @@ class DatasetStyle {
       other.color == color &&
       other.lineSize == lineSize &&
       other.fillOpacity == fillOpacity &&
+      other.fillBaseline == fillBaseline &&
       other.cubicIntensity == cubicIntensity;
 }
 
@@ -538,7 +558,7 @@ class HighlightStyle {
   }
 
   @override
-  int get hashCode => hashValues(color, lineSize, vertical, horizontal);
+  int get hashCode => Object.hash(color, lineSize, vertical, horizontal);
 
   @override
   bool operator ==(Object other) =>
