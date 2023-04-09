@@ -488,6 +488,8 @@ class SelectionLabelStyle {
       other.leftYAxisLabelProvider == leftYAxisLabelProvider;
 }
 
+enum DatasetFillBaseline { ZERO, MIN_VALUE }
+
 class DatasetStyle {
   static const double defaultLineSize = _defaultLineSize;
   final Color color;
@@ -495,26 +497,34 @@ class DatasetStyle {
   final double lineSize;
   final double cubicIntensity;
 
+  /// Determines whether fill should fill to 0 on the Y axis or the minimum value
+  /// displayed in the chart.
+  final DatasetFillBaseline fillBaseline;
+
   DatasetStyle(
       {required this.color,
       this.fillOpacity = 0.25,
+      this.fillBaseline = DatasetFillBaseline.ZERO,
       this.lineSize = defaultLineSize,
       this.cubicIntensity = 0.2});
 
   DatasetStyle copyWith(
       {Color? color,
       double? fillOpacity,
+      DatasetFillBaseline? fillBaseline,
       double? lineSize,
       double? cubicIntensity}) {
     return DatasetStyle(
         color: color ?? this.color,
         fillOpacity: fillOpacity ?? this.fillOpacity,
+        fillBaseline: fillBaseline ?? this.fillBaseline,
         lineSize: lineSize ?? this.lineSize,
         cubicIntensity: cubicIntensity ?? this.cubicIntensity);
   }
 
   @override
-  int get hashCode => Object.hash(color, lineSize, fillOpacity, cubicIntensity);
+  int get hashCode =>
+      Object.hash(color, lineSize, fillOpacity, fillBaseline, cubicIntensity);
 
   @override
   bool operator ==(Object other) =>
@@ -522,6 +532,7 @@ class DatasetStyle {
       other.color == color &&
       other.lineSize == lineSize &&
       other.fillOpacity == fillOpacity &&
+      other.fillBaseline == fillBaseline &&
       other.cubicIntensity == cubicIntensity;
 }
 

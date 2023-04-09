@@ -2,6 +2,7 @@
 
 * improve labelling above/below zero
 * introduce `applyMarginBelow` predicate for controlling `marginBelow` on `AxisStyle`
+* introduce `fillBaseline` to `DatasetStyle` to control baseline for filling datasets
 
 ## 1.2.2
 
