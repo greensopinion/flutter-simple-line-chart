@@ -1,3 +1,7 @@
+## 1.3.1
+
+* fix null pointer exception
+
 ## 1.3.0
 
 * improve labelling above/below zero
