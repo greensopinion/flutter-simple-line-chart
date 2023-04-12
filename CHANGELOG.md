@@ -1,3 +1,9 @@
+## 1.4.0
+
+* update SDK version
+* add CI actions
+* address warnings
+
 ## 1.3.1
 
 * fix null pointer exception
