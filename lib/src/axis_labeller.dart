@@ -65,7 +65,7 @@ class AxisLabeller {
           final interval = (dataSet.dataPoints.length / labelCount).ceil();
           dataSet.dataPoints.asMap().forEach((index, point) {
             if (index % interval == 0) {
-              _labelPoints!.add(_createXaxisLabelPoint(
+              labelPoints.add(_createXaxisLabelPoint(
                   projection, point, dataSet.axisDependency));
             }
           });
