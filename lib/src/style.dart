@@ -38,7 +38,7 @@ class LineChartStyle {
   factory LineChartStyle.fromTheme(BuildContext context,
       {List<Color>? datasetColors}) {
     final theme = Theme.of(context);
-    final textStyle = theme.textTheme.bodyText1 ?? theme.textTheme.bodyText2!;
+    final textStyle = theme.textTheme.bodyLarge ?? theme.textTheme.bodyMedium!;
     final fontHeight = createTextPainter(textStyle, 'SAMPLE').height;
     final lineColor = textStyle.color!.withOpacity(0.3);
     final datasetStyles = (datasetColors ?? _defaultDatasetColors())
