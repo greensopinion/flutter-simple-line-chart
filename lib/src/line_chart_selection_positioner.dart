@@ -2,9 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_line_chart/simple_line_chart.dart';
-import 'package:simple_line_chart/src/line_chart_selection_label.dart';
-import 'package:simple_line_chart/src/selection_model.dart';
+
+import 'line_chart_selection_label.dart';
+import 'selection_model.dart';
 
 class LineChartSelectionPositioner extends StatelessWidget {
   final LineChartSelectionLabel child;

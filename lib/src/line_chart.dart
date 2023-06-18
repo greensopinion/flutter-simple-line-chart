@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_line_chart/src/line_chart_selection_positioner.dart';
+import 'line_chart_selection_positioner.dart';
 
 import '../simple_line_chart.dart';
 import 'axis_labeller.dart';
