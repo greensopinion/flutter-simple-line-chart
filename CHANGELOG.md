@@ -1,3 +1,7 @@
+## 1.4.1
+
+* move the selection label when it obscures the selection
+
 ## 1.4.0
 
 * update SDK version
