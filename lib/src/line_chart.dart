@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'line_chart_selection_positioner.dart';
 
 import '../simple_line_chart.dart';
 import 'axis_labeller.dart';
@@ -270,9 +271,7 @@ class _ChartAreaState extends State<_ChartArea> {
           if (_showSelectionLabel &&
               widget.style.selectionLabelStyle != null &&
               (_selectionModel?.selection.isNotEmpty ?? false)) {
-            children.add(Positioned(
-                top: 8,
-                left: 8,
+            children.add(LineChartSelectionPositioner(
                 child: LineChartSelectionLabel(widget.data, widget.style)));
           }
           return GestureDetector(
