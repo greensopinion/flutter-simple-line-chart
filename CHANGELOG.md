@@ -1,3 +1,7 @@
+## 1.4.2
+
+* prevent exception when selection occurs with an empty dataset
+
 ## 1.4.1
 
 * move the selection label when it obscures the selection

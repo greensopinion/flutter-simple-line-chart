@@ -36,18 +36,31 @@ class LineChartSelectionPositioner extends StatelessWidget {
           .map((offset) => offset.dx)
           .reduce(min);
 
-  double _leftMostPointOffset(SelectionModel selectionModel) =>
-      selectionModel.data.datasets
-          .map((dataset) => selectionModel.projection.toPixel(
-              axisDependency: dataset.axisDependency,
-              data: dataset.dataPoints.first.toOffset()))
-          .map((offset) => offset.dx)
-          .reduce(min);
-  double _rightMostPointOffset(SelectionModel selectionModel) =>
-      selectionModel.data.datasets
-          .map((dataset) => selectionModel.projection.toPixel(
-              axisDependency: dataset.axisDependency,
-              data: dataset.dataPoints.last.toOffset()))
-          .map((offset) => offset.dx)
-          .reduce(max);
+  double _leftMostPointOffset(SelectionModel selectionModel) {
+    final datasets = selectionModel.data.datasets
+        .where((dataset) => dataset.dataPoints.isNotEmpty);
+    if (datasets.isEmpty) {
+      return 0;
+    }
+    return datasets
+        .map((dataset) => selectionModel.projection.toPixel(
+            axisDependency: dataset.axisDependency,
+            data: dataset.dataPoints.first.toOffset()))
+        .map((offset) => offset.dx)
+        .reduce(min);
+  }
+
+  double _rightMostPointOffset(SelectionModel selectionModel) {
+    final datasets = selectionModel.data.datasets
+        .where((dataset) => dataset.dataPoints.isNotEmpty);
+    if (datasets.isEmpty) {
+      return 0;
+    }
+    return datasets
+        .map((dataset) => selectionModel.projection.toPixel(
+            axisDependency: dataset.axisDependency,
+            data: dataset.dataPoints.last.toOffset()))
+        .map((offset) => offset.dx)
+        .reduce(max);
+  }
 }
