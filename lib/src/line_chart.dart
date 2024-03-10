@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'line_chart_selection_positioner.dart';
 
-import '../simple_line_chart.dart';
 import 'axis_labeller.dart';
 import 'legend.dart';
+import 'line_chart_data.dart';
 import 'line_chart_data_series.dart';
 import 'line_chart_grid.dart';
 import 'line_chart_selection.dart';
 import 'line_chart_selection_label.dart';
+import 'line_chart_selection_positioner.dart';
 import 'selection_model.dart';
+import 'style.dart';
 import 'text_painter.dart';
 import 'x_axis.dart';
 import 'y_axis.dart';
@@ -206,7 +207,7 @@ class LineChart extends StatelessWidget {
     if (style == null) {
       return 0;
     }
-    return createTextPainter(style.textStyle, 'SAMPLE').height;
+    return createTextPainter(style.textStyle, 'SAMPLE').height.ceilToDouble();
   }
 }
 

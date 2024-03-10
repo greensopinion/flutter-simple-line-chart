@@ -12,41 +12,37 @@ class Legend extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final items = data.datasets.asMap().entries.map((e) => LegendItem(
+        label: e.value.label, color: style.datasetStyleOfIndex(e.key).color));
+    final legendStyle = style.legendStyle!;
+    final boxSize =
+        (legendStyle.textStyle.fontSize ?? LegendStyle.defaultFontSize);
     return Padding(
-        padding: style.legendStyle!.insets,
+        padding: legendStyle.insets,
         child: Wrap(
-            children: data.datasets.asMap().entries.map((e) {
-          final item = _LegendItem(
-              style: style.datasetStyleOfIndex(e.key),
-              legendStyle: style.legendStyle!,
-              dataset: e.value);
-          return Padding(
-              padding: EdgeInsets.only(right: item.boxSize), child: item);
-        }).toList()));
-  }
-
-  static double widthAroundText(LegendStyle style) {
-    double boxSize = (style.textStyle.fontSize ?? LegendStyle.defaultFontSize);
-    double borderSize = style.borderSize * 2;
-    double padding = boxSize / 2;
-    return boxSize + borderSize + padding;
+            children: items
+                .map((e) => Padding(
+                    padding: EdgeInsets.only(right: boxSize),
+                    child: _LegendItem(item: e, legendStyle: legendStyle)))
+                .toList()));
   }
 }
 
+class LegendItem {
+  final String label;
+  final Color color;
+
+  const LegendItem({required this.label, required this.color});
+}
+
 class _LegendItem extends StatelessWidget {
-  final Dataset dataset;
-  final DatasetStyle style;
+  final LegendItem item;
   final LegendStyle legendStyle;
+
+  const _LegendItem({required this.item, required this.legendStyle});
 
   double get boxSize =>
       (legendStyle.textStyle.fontSize ?? LegendStyle.defaultFontSize);
-
-  const _LegendItem(
-      {Key? key,
-      required this.style,
-      required this.legendStyle,
-      required this.dataset})
-      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -58,8 +54,8 @@ class _LegendItem extends StatelessWidget {
                 border: Border.all(
                     color: legendStyle.borderColor,
                     width: legendStyle.borderSize),
-                color: style.color)));
-    final label = Text(dataset.label, style: legendStyle.textStyle);
+                color: item.color)));
+    final label = Text(item.label, style: legendStyle.textStyle);
     return Row(mainAxisSize: MainAxisSize.min, children: [
       colorBox,
       Padding(padding: EdgeInsets.only(left: boxSize / 2.0), child: label)

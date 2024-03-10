@@ -54,7 +54,7 @@ class LineChartStyle {
       leftYAxisLabelProvider: (point) => _defaultLabelProvider(point.y),
       rightYAxisLabelProvider: (point) => _defaultLabelProvider(point.y),
     );
-
+    final labelInset = (fontHeight / 2).ceilToDouble();
     return LineChartStyle(
         legendStyle: LegendStyle(
             borderColor: lineColor, textStyle: textStyle, insets: legendInsets),
@@ -64,20 +64,20 @@ class LineChartStyle {
             textStyle: textStyle,
             lineColor: lineColor,
             labelProvider: (point) => _defaultLabelProvider(point.x),
-            labelInsets: EdgeInsets.only(bottom: fontHeight / 2)),
+            labelInsets: EdgeInsets.only(bottom: labelInset)),
         bottomAxisStyle: AxisStyle(
             textStyle: textStyle,
             lineColor: lineColor,
             labelProvider: (point) => _defaultLabelProvider(point.x),
-            labelInsets: EdgeInsets.only(top: fontHeight / 2)),
+            labelInsets: EdgeInsets.only(top: labelInset)),
         leftAxisStyle: AxisStyle(
             textStyle: textStyle,
-            labelInsets: EdgeInsets.only(right: fontHeight / 2),
+            labelInsets: EdgeInsets.only(right: labelInset),
             labelProvider: (point) => _defaultLabelProvider(point.y),
             lineColor: lineColor),
         rightAxisStyle: AxisStyle(
             textStyle: textStyle,
-            labelInsets: EdgeInsets.only(left: fontHeight / 2),
+            labelInsets: EdgeInsets.only(left: labelInset),
             labelProvider: (point) => _defaultLabelProvider(point.y),
             lineColor: lineColor),
         selectionLabelStyle: selectionLabelStyle);
