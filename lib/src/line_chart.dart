@@ -6,6 +6,8 @@ import 'legend.dart';
 import 'line_chart_data.dart';
 import 'line_chart_data_series.dart';
 import 'line_chart_grid.dart';
+import 'line_chart_range.dart';
+import 'line_chart_range_data.dart';
 import 'line_chart_selection.dart';
 import 'line_chart_selection_label.dart';
 import 'line_chart_selection_positioner.dart';
@@ -70,12 +72,29 @@ class LineChart extends StatelessWidget {
           maxWidth: constraints.maxWidth - padding.left - padding.right);
       final children = <Widget>[];
 
-      final bottomInset = _xAxisHeight(style.bottomAxisStyle);
-
       var leftAxisWidth = 0.0;
       var rightAxisWidth = 0.0;
-      final topInset = _xAxisHeight(style.topAxisStyle);
+      final rangeStyle = style.rangeDatasetStyle ?? RangeDatasetStyle();
+      final bottomRangeDatasets = data.rangeDatasets
+          .where((e) => e.axisDependency == XAxisDependency.BOTTOM)
+          .toList(growable: false);
+      final topRangeDatasets = data.rangeDatasets
+          .where((e) => e.axisDependency == XAxisDependency.TOP)
+          .toList(growable: false);
+      final bottomRangesHeight = bottomRangeDatasets.length * rangeStyle.height;
+      final topRangesHeight = topRangeDatasets.length * rangeStyle.height;
+      final bottomAxisHeight = _xAxisHeight(style.bottomAxisStyle);
+      final bottomInset = bottomAxisHeight + bottomRangesHeight;
+      final topAxisHeight = _xAxisHeight(style.topAxisStyle);
+      final topInset = topAxisHeight + topRangesHeight;
       final verticalAxisInset = topInset + bottomInset;
+      final datasetToStyle = data.rangeDatasets.asMap().entries.map((e) =>
+          MapEntry(e.value,
+              style.datasetStyleOfIndex(e.key + data.datasets.length)));
+      final topDatasetToStyle = datasetToStyle
+          .where((e) => e.key.axisDependency == XAxisDependency.TOP);
+      final bottomDatasetToStyle = datasetToStyle
+          .where((e) => e.key.axisDependency == XAxisDependency.BOTTOM);
       AxisLabeller? leftAxisLabeller = style.leftAxisStyle == null
           ? null
           : AxisLabeller(
@@ -144,7 +163,7 @@ class LineChart extends StatelessWidget {
             left: 0,
             top: 0,
             width: frame.maxWidth,
-            height: topInset,
+            height: topAxisHeight,
             child: XAxis(
                 style: topAxisLabeller.axisStyle,
                 labeller: topAxisLabeller,
@@ -156,13 +175,23 @@ class LineChart extends StatelessWidget {
             left: 0,
             top: frame.maxHeight - bottomInset,
             width: frame.maxWidth,
-            height: topInset,
+            height: bottomAxisHeight,
             child: XAxis(
                 style: bottomAxisLabeller.axisStyle,
                 labeller: bottomAxisLabeller,
                 labelOffset: leftAxisWidth,
                 data: data)));
       }
+      topDatasetToStyle
+          .map((d) => LineChartRange(
+              dataset: d.key, rangeStyle: rangeStyle, style: d.value))
+          .forEach((e) {
+        children.add(Positioned(
+            left: leftAxisWidth,
+            top: topAxisHeight,
+            width: frame.maxWidth - leftAxisWidth - rightAxisWidth,
+            child: e));
+      });
       children.add(Positioned(
           left: leftAxisWidth,
           top: topInset,
@@ -174,6 +203,20 @@ class LineChart extends StatelessWidget {
               controller: controller,
               xLabeller: bottomAxisLabeller ?? topAxisLabeller!,
               yLabeller: leftAxisLabeller ?? rightAxisLabeller!)));
+      bottomDatasetToStyle
+          .map((d) => LineChartRange(
+              dataset: d.key, rangeStyle: rangeStyle, style: d.value))
+          .forEach((e) {
+        children.add(Positioned(
+            left: leftAxisWidth,
+            top: topAxisHeight +
+                frame.maxHeight -
+                topInset -
+                bottomInset +
+                rangeStyle.height,
+            width: frame.maxWidth - leftAxisWidth - rightAxisWidth,
+            child: e));
+      });
       final chartComponents = <Widget>[
         Container(
           width: constraints.maxWidth,

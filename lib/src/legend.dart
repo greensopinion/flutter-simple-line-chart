@@ -12,8 +12,21 @@ class Legend extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final items = data.datasets.asMap().entries.map((e) => LegendItem(
-        label: e.value.label, color: style.datasetStyleOfIndex(e.key).color));
+    final items = data.datasets
+            .asMap()
+            .entries
+            .map((e) => LegendItem(
+                label: e.value.label, style: style.datasetStyleOfIndex(e.key)))
+            .toList() +
+        data.rangeDatasets
+            .asMap()
+            .entries
+            .where((e) => e.value.includeInLegend)
+            .map((e) {
+          final datasetStyle =
+              style.datasetStyleOfIndex(e.key + data.datasets.length);
+          return LegendItem(label: e.value.label, style: datasetStyle);
+        }).toList();
     final legendStyle = style.legendStyle!;
     final boxSize =
         (legendStyle.textStyle.fontSize ?? LegendStyle.defaultFontSize);
@@ -30,9 +43,9 @@ class Legend extends StatelessWidget {
 
 class LegendItem {
   final String label;
-  final Color color;
+  final DatasetStyle style;
 
-  const LegendItem({required this.label, required this.color});
+  const LegendItem({required this.label, required this.style});
 }
 
 class _LegendItem extends StatelessWidget {
@@ -46,15 +59,16 @@ class _LegendItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final borderColor = item.style.color;
+    final color = item.style.color.withOpacity(item.style.fillOpacity);
     final colorBox = SizedBox(
         width: boxSize,
         height: boxSize,
         child: Container(
             decoration: BoxDecoration(
                 border: Border.all(
-                    color: legendStyle.borderColor,
-                    width: legendStyle.borderSize),
-                color: item.color)));
+                    color: borderColor, width: legendStyle.borderSize),
+                color: color)));
     final label = Text(item.label, style: legendStyle.textStyle);
     return Row(mainAxisSize: MainAxisSize.min, children: [
       colorBox,

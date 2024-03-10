@@ -27,13 +27,25 @@ class _LineChartContentState extends State<LineChartContent> {
           label: 'Second', dataPoints: _createDataPoints(offsetInDegrees: 0)),
       Dataset(
           label: 'Third', dataPoints: _createDataPoints(offsetInDegrees: 180))
+    ], rangeDatasets: [
+      RangeDataset(
+          label: 'Fourth',
+          axisDependency: XAxisDependency.TOP,
+          gradientDistance: 3.0,
+          bounds: Range(low: 0, high: _maxX.toDouble()),
+          ranges: _createRanges()),
+      RangeDataset(
+          label: 'Fifth',
+          axisDependency: XAxisDependency.BOTTOM,
+          bounds: Range(low: 0, high: _maxX.toDouble()),
+          ranges: _createRanges())
     ]);
   }
 
   @override
   Widget build(BuildContext context) {
     final template = LineChartStyle.fromTheme(context);
-    final style = template.copyRemoving(legend: true).copyWithAxes(
+    final style = template.copyWithAxes(
         topAxisStyle: template.topAxisStyle,
         leftAxisStyle: template.leftAxisStyle?.copyWith(
             labelIncrementMultiples: 100,
@@ -58,7 +70,7 @@ class _LineChartContentState extends State<LineChartContent> {
 List<DataPoint> _createDataPoints({required int offsetInDegrees}) {
   List<DataPoint> dataPoints = [];
   const degreesToRadians = (pi / 180);
-  for (int x = 0; x < 180; x += 20) {
+  for (int x = 0; x < _maxX; x += 20) {
     final di = (x * 2).toDouble() * degreesToRadians;
     dataPoints.add(DataPoint(
         x: x.toDouble(),
@@ -66,3 +78,15 @@ List<DataPoint> _createDataPoints({required int offsetInDegrees}) {
   }
   return dataPoints;
 }
+
+List<Range> _createRanges() {
+  final ranges = <Range>[];
+  final increment = (_maxX * 0.25).toInt();
+  final size = (_maxX * 0.1).toInt();
+  for (int x = (increment ~/ 2); x <= _maxX; x += increment) {
+    ranges.add(Range(low: x.toDouble(), high: (x + size).toDouble()));
+  }
+  return ranges;
+}
+
+const _maxX = 180;

@@ -1,10 +1,13 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'line_chart_range_data.dart';
+
 class LineChartData {
   final List<Dataset> datasets;
+  final List<RangeDataset> rangeDatasets;
 
-  LineChartData({required this.datasets});
+  LineChartData({required this.datasets, this.rangeDatasets = const []});
 
   double maxY(YAxisDependency dependency) =>
       datasetsOf(axisDependency: dependency).maxY();
@@ -32,7 +35,7 @@ class LineChartData {
 
   @override
   String toString() =>
-      'LineChartData(datasets=${datasets.map((e) => e.label).join(", ")})';
+      'LineChartData(datasets=${datasets.map((e) => e.label).join(",")}, rangeDatasets=${rangeDatasets.map((e) => e.label).join(",")})';
 }
 
 extension DatasetListExtension on List<Dataset> {

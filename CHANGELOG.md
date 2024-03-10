@@ -1,3 +1,7 @@
+## 1.5.0
+
+* add range datasets for bands along the x-axis
+
 ## 1.4.2
 
 * prevent exception when selection occurs with an empty dataset

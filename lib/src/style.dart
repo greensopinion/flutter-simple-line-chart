@@ -6,6 +6,7 @@ import 'text_painter.dart';
 class LineChartStyle {
   final LegendStyle? legendStyle;
   final List<DatasetStyle> datasetStyles;
+  final RangeDatasetStyle? rangeDatasetStyle;
   final AxisStyle? topAxisStyle;
   final AxisStyle? bottomAxisStyle;
   final AxisStyle? leftAxisStyle;
@@ -24,6 +25,7 @@ class LineChartStyle {
   LineChartStyle(
       {required this.legendStyle,
       required this.datasetStyles,
+      this.rangeDatasetStyle,
       this.topAxisStyle,
       this.bottomAxisStyle,
       this.leftAxisStyle,
@@ -93,6 +95,7 @@ class LineChartStyle {
   LineChartStyle copyWith(
       {LegendStyle? legendStyle,
       List<DatasetStyle>? datasetStyles,
+      RangeDatasetStyle? rangeDatasetStyle,
       AxisStyle? topAxisStyle,
       AxisStyle? bottomAxisStyle,
       AxisStyle? leftAxisStyle,
@@ -103,6 +106,7 @@ class LineChartStyle {
     return LineChartStyle(
         legendStyle: legendStyle ?? this.legendStyle,
         datasetStyles: datasetStyles ?? this.datasetStyles,
+        rangeDatasetStyle: rangeDatasetStyle ?? this.rangeDatasetStyle,
         animationDuration: animationDuration ?? this.animationDuration,
         bottomAxisStyle: bottomAxisStyle ?? this.bottomAxisStyle,
         leftAxisStyle: leftAxisStyle ?? this.leftAxisStyle,
@@ -172,6 +176,7 @@ class LineChartStyle {
   int get hashCode => Object.hash(
       legendStyle,
       Object.hashAll(datasetStyles),
+      rangeDatasetStyle,
       topAxisStyle,
       bottomAxisStyle,
       leftAxisStyle,
@@ -185,6 +190,7 @@ class LineChartStyle {
       other is LineChartStyle &&
       other.legendStyle == legendStyle &&
       other.datasetStyles == datasetStyles &&
+      other.rangeDatasetStyle == rangeDatasetStyle &&
       other.topAxisStyle == topAxisStyle &&
       other.bottomAxisStyle == bottomAxisStyle &&
       other.leftAxisStyle == leftAxisStyle &&
@@ -490,6 +496,19 @@ class SelectionLabelStyle {
 
 enum DatasetFillBaseline { ZERO, MIN_VALUE }
 
+class RangeDatasetStyle {
+  final double height;
+
+  RangeDatasetStyle({this.height = 10.0});
+
+  @override
+  int get hashCode => height.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      other is RangeDatasetStyle && other.height == height;
+}
+
 class DatasetStyle {
   static const double defaultLineSize = _defaultLineSize;
   final Color color;
@@ -569,15 +588,21 @@ class HighlightStyle {
       other.horizontal == horizontal;
 }
 
-List<Color> _defaultDatasetColors() =>
-    [_Colors.primary, _Colors.secondary, _Colors.tertiary];
+List<Color> _defaultDatasetColors() => [
+      _Colors.first,
+      _Colors.second,
+      _Colors.third,
+      _Colors.fourth,
+      _Colors.fifth
+    ];
 
 class _Colors {
-  static final _opaque = 0xff;
-  static final Color primary = Color.fromARGB(_opaque, 88, 153, 218);
-  static final Color secondary = Color.fromARGB(_opaque, 232, 116, 69);
-  static final Color tertiary = Color.fromARGB(_opaque, 25, 169, 121);
-  static final Color highlight = Color.fromARGB(_opaque, 242, 155, 29);
+  static final Color first = Colors.blue;
+  static final Color second = Colors.red;
+  static final Color third = Colors.green;
+  static final Color fourth = Colors.purple;
+  static final Color fifth = Colors.brown;
+  static final Color highlight = Colors.orange;
 }
 
 String _defaultLabelProvider(double v) => v.toStringAsFixed(0);
