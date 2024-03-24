@@ -4,8 +4,8 @@ version: 1.5.0
 homepage: https://github.com/greensopinion/flutter-simple-line-chart
 
 environment:
-  sdk: '>=2.19.6 <4.0.0'
-  flutter: ">=3.7.0"
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: ">=3.10.0"
 
 dependencies:
   flutter:
@@ -15,8 +15,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  test: ^1.16.8
-  flutter_lints: ^2.0.1
+  test: ^1.24.9
+  flutter_lints: ^3.0.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
