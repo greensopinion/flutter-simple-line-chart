@@ -1,3 +1,7 @@
+## 1.5.1
+
+* fix legend colors
+
 ## 1.5.0
 
 * add range datasets for bands along the x-axis
