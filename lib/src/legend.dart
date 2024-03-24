@@ -59,16 +59,15 @@ class _LegendItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = item.style.color;
-    final color = item.style.color.withOpacity(item.style.fillOpacity);
     final colorBox = SizedBox(
         width: boxSize,
         height: boxSize,
         child: Container(
             decoration: BoxDecoration(
                 border: Border.all(
-                    color: borderColor, width: legendStyle.borderSize),
-                color: color)));
+                    color: legendStyle.borderColor,
+                    width: legendStyle.borderSize),
+                color: item.style.color)));
     final label = Text(item.label, style: legendStyle.textStyle);
     return Row(mainAxisSize: MainAxisSize.min, children: [
       colorBox,
