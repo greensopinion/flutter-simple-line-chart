@@ -1,3 +1,7 @@
+## 1.5.2
+
+* reduce jank from axis labeller
+
 ## 1.5.1
 
 * fix legend colors

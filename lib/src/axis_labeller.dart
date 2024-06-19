@@ -49,9 +49,8 @@ class AxisLabeller {
     }
     final projection = Projection(style, Size(length, length), data);
     if (_labelPoints == null) {
-      final labels = _labelPainter(dataSet.dataPoints).toList();
-      final labelSize =
-          labels.isEmpty ? 0 : labels.map((e) => _textSize(e)).reduce(max);
+      final longestLabel = _longestLabel(dataSet.dataPoints);
+      final labelSize = _textSize(_createPainter(longestLabel));
       final labelSizeWithSpacing = labelSize + spacing;
       final labelCount = axisStyle.labelCount ??
           min(axisStyle.maxLabels, length ~/ labelSizeWithSpacing);
@@ -137,15 +136,19 @@ class AxisLabeller {
     return _labelPoints!;
   }
 
-  Iterable<_PainterPoint> _labelPainter(Iterable<DataPoint> points) => points
-      .map((p) => _PainterPoint(p, _createPainter(axisStyle.labelProvider(p))));
+  String _longestLabel(Iterable<DataPoint> points) => points.isEmpty
+      ? ''
+      : points
+          .map((p) => axisStyle.labelProvider(p))
+          .reduce((a, b) => a.length > b.length ? a : b)
+          .replaceAll(RegExp(r'[a-zA-Z0-9]'), 'E');
 
   TextPainter _createPainter(String text) =>
       createTextPainter(axisStyle.textStyle, text);
 
-  double _textSize(_PainterPoint e) => (axis == AxisDimension.Y)
-      ? e.painter.height
-      : e.painter.width + _textWidthCorrection;
+  double _textSize(TextPainter painter) => (axis == AxisDimension.Y)
+      ? painter.height
+      : painter.width + _textWidthCorrection;
 
   LabelPoint _createXaxisLabelPoint(
       Projection projection, DataPoint point, YAxisDependency axisDependency) {
@@ -190,10 +193,3 @@ class LabelPoint {
 // not sure why, but TextPainter seems to calculate
 // text width short by 2 pixels
 const double _textWidthCorrection = 2;
-
-class _PainterPoint {
-  final DataPoint dataPoint;
-  final TextPainter painter;
-
-  _PainterPoint(this.dataPoint, this.painter);
-}
