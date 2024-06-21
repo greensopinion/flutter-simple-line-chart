@@ -1,3 +1,7 @@
+## 1.5.3
+
+* improve label spacing
+
 ## 1.5.2
 
 * reduce jank from axis labeller
