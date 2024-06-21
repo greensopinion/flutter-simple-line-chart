@@ -27,7 +27,7 @@ class AxisLabeller {
 
   double get fontSize =>
       axisStyle.textStyle.fontSize ?? AxisStyle.defaultFontSize;
-  double get spacing => fontSize / 2.0;
+  double get spacing => fontSize / 3 * 4;
   double get width => labelPoints().isEmpty
       ? 0
       : labelPoints().map((e) => e.width).reduce(max).ceilToDouble();
@@ -51,7 +51,8 @@ class AxisLabeller {
     if (_labelPoints == null) {
       final longestLabel = _longestLabel(dataSet.dataPoints);
       final labelSize = _textSize(_createPainter(longestLabel));
-      final labelSizeWithSpacing = labelSize + spacing;
+      final labelSizeWithSpacing =
+          labelSize + max(spacing, (labelSize / 4).ceilToDouble());
       final labelCount = axisStyle.labelCount ??
           min(axisStyle.maxLabels, length ~/ labelSizeWithSpacing);
       if (labelCount == 0) {
@@ -70,7 +71,7 @@ class AxisLabeller {
             }
           });
         } else {
-          final interval = range / labelCount;
+          final interval = (range / labelCount).round();
           if (interval > 0) {
             for (var labelX = minX; labelX <= maxX; labelX += interval) {
               labelPoints.add(_createXaxisLabelPoint(projection,
