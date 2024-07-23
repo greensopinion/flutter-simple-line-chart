@@ -137,12 +137,21 @@ class AxisLabeller {
     return _labelPoints!;
   }
 
-  String _longestLabel(Iterable<DataPoint> points) => points.isEmpty
+  String _longestLabel(List<DataPoint> points) => points.isEmpty
       ? ''
-      : points
+      : _takeSelection(points)
           .map((p) => axisStyle.labelProvider(p))
           .reduce((a, b) => a.length > b.length ? a : b)
           .replaceAll(RegExp(r'[a-zA-Z0-9]'), 'E');
+
+  Iterable<DataPoint> _takeSelection(List<DataPoint> points) {
+    if (points.length < 10) {
+      return points;
+    }
+    return points.take(2).toList() +
+        [points[(points.length / 2).floor()]] +
+        [points.last];
+  }
 
   TextPainter _createPainter(String text) =>
       createTextPainter(axisStyle.textStyle, text);
