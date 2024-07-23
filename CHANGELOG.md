@@ -1,3 +1,7 @@
+## 1.5.4
+
+* improve performance for charts with thousands of points
+
 ## 1.5.3
 
 * improve label spacing
