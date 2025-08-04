@@ -4,9 +4,9 @@ import 'axis_labeller.dart';
 import 'style.dart';
 
 class LineChartGrid extends StatelessWidget {
-  final AxisStyle style;
-  final AxisLabeller xLabeller;
-  final AxisLabeller yLabeller;
+  final AxisStyle? style;
+  final AxisLabeller? xLabeller;
+  final AxisLabeller? yLabeller;
 
   const LineChartGrid(
       {Key? key,
@@ -22,20 +22,24 @@ class LineChartGrid extends StatelessWidget {
 }
 
 class _GridPainter extends CustomPainter {
-  final AxisStyle style;
-  final AxisLabeller xLabeller;
-  final AxisLabeller yLabeller;
+  final AxisStyle? style;
+  final AxisLabeller? xLabeller;
+  final AxisLabeller? yLabeller;
   _GridPainter(this.style, this.xLabeller, this.yLabeller);
 
   @override
   void paint(Canvas canvas, Size size) {
+    final style = this.style;
+    if (style == null) {
+      return;
+    }
     final linePaint = Paint()
       ..color = style.lineColor
       ..strokeWidth = style.lineSize
       ..isAntiAlias = true
       ..style = PaintingStyle.stroke;
     canvas.drawRect(Offset.zero & size, linePaint);
-    xLabeller.labelPoints().forEach((p) {
+    xLabeller?.labelPoints().forEach((p) {
       final rightProximity = (p.center - size.width).abs();
       final leftProximity = p.center;
       final margin = 4 * style.lineSize;
@@ -44,7 +48,7 @@ class _GridPainter extends CustomPainter {
             Offset(p.center, 0), Offset(p.center, size.height), linePaint);
       }
     });
-    yLabeller.labelPoints().forEach((p) {
+    yLabeller?.labelPoints().forEach((p) {
       final bottomProximity = (p.center - size.height).abs();
       final topProximity = p.center;
       final margin = 4 * style.lineSize;

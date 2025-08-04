@@ -1,3 +1,7 @@
+## 1.5.5
+
+* enable use without legend and without x or y axis labels
+
 ## 1.5.4
 
 * improve performance for charts with thousands of points

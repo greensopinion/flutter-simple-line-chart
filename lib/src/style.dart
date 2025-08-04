@@ -32,17 +32,14 @@ class LineChartStyle {
       this.rightAxisStyle,
       this.highlightStyle,
       this.selectionLabelStyle,
-      this.animationDuration = const Duration(seconds: 1)}) {
-    assert(topAxisStyle != null || bottomAxisStyle != null);
-    assert(leftAxisStyle != null || rightAxisStyle != null);
-  }
+      this.animationDuration = const Duration(seconds: 1)});
 
   factory LineChartStyle.fromTheme(BuildContext context,
       {List<Color>? datasetColors}) {
     final theme = Theme.of(context);
     final textStyle = theme.textTheme.bodyLarge ?? theme.textTheme.bodyMedium!;
     final fontHeight = createTextPainter(textStyle, 'SAMPLE').height;
-    final lineColor = textStyle.color!.withOpacity(0.3);
+    final lineColor = textStyle.color!.withAlpha(77);
     final datasetStyles = (datasetColors ?? _defaultDatasetColors())
         .map((c) => DatasetStyle(color: c))
         .toList();

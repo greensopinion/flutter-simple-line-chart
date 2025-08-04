@@ -201,8 +201,8 @@ class LineChart extends StatelessWidget {
               data: data,
               style: style,
               controller: controller,
-              xLabeller: bottomAxisLabeller ?? topAxisLabeller!,
-              yLabeller: leftAxisLabeller ?? rightAxisLabeller!)));
+              xLabeller: bottomAxisLabeller ?? topAxisLabeller,
+              yLabeller: leftAxisLabeller ?? rightAxisLabeller)));
       bottomDatasetToStyle
           .map((d) => LineChartRange(
               dataset: d.key, rangeStyle: rangeStyle, style: d.value))
@@ -258,8 +258,8 @@ class _ChartArea extends StatefulWidget {
   final LineChartData data;
   final LineChartStyle style;
   final LineChartController controller;
-  final AxisLabeller xLabeller;
-  final AxisLabeller yLabeller;
+  final AxisLabeller? xLabeller;
+  final AxisLabeller? yLabeller;
 
   const _ChartArea(
       {Key? key,
@@ -305,8 +305,8 @@ class _ChartAreaState extends State<_ChartArea> {
           _selectionModel?.size = size;
           final children = [
             LineChartGrid(
-                style: (widget.style.topAxisStyle ??
-                    widget.style.bottomAxisStyle)!,
+                style:
+                    widget.style.topAxisStyle ?? widget.style.bottomAxisStyle,
                 xLabeller: widget.xLabeller,
                 yLabeller: widget.yLabeller),
             LineChartDataSeries(style: widget.style, data: widget.data),
