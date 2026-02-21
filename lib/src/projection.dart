@@ -87,12 +87,16 @@ class Projection {
   }
 
   double _minX() {
-    final values = data.datasets.map((e) => e.minX);
+    final values = data.datasets
+        .where((it) => it.dataPoints.isNotEmpty)
+        .map((e) => e.minX);
     return values.isEmpty ? 0 : values.reduce(min);
   }
 
   double _maxX() {
-    final values = data.datasets.map((e) => e.maxX);
+    final values = data.datasets
+        .where((it) => it.dataPoints.isNotEmpty)
+        .map((e) => e.maxX);
     return values.isEmpty ? 0 : values.reduce(max);
   }
 }

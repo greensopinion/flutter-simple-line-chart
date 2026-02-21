@@ -40,22 +40,22 @@ class LineChartData {
 
 extension DatasetListExtension on List<Dataset> {
   double maxX() {
-    final values = map((e) => e.maxX);
+    final values = where((d) => d.dataPoints.isNotEmpty).map((e) => e.maxX);
     return values.isEmpty ? 0 : values.reduce(max);
   }
 
   double minX() {
-    final values = map((e) => e.minX);
+    final values = where((d) => d.dataPoints.isNotEmpty).map((e) => e.minX);
     return values.isEmpty ? 0 : values.reduce(min);
   }
 
   double maxY() {
-    final values = map((e) => e.maxY);
+    final values = where((d) => d.dataPoints.isNotEmpty).map((e) => e.maxY);
     return values.isEmpty ? 0 : values.reduce(max);
   }
 
   double minY() {
-    final values = map((e) => e.minY);
+    final values = where((d) => d.dataPoints.isNotEmpty).map((e) => e.minY);
     return values.isEmpty ? 0 : values.reduce(min);
   }
 }

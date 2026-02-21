@@ -1,3 +1,7 @@
+## 1.5.6
+
+* improve legend behaviour with empty datasets
+
 ## 1.5.5
 
 * enable use without legend and without x or y axis labels

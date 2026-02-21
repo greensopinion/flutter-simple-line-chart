@@ -32,7 +32,7 @@ class _RangePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     canvas.clipRect(Offset(0, 0) & size);
     final paint = Paint()
-      ..color = style.color.withOpacity(style.fillOpacity)
+      ..color = style.color.withValues(alpha: style.fillOpacity)
       ..isAntiAlias = true
       ..style = PaintingStyle.fill;
     final linePaint = Paint()
@@ -53,12 +53,12 @@ class _RangePainter extends CustomPainter {
           ..shader = ui.Gradient.linear(
               Offset(start, rangeStyle.height / 2.0),
               Offset(start + fadeDistance, rangeStyle.height / 2.0),
-              [paint.color.withOpacity(0.0), paint.color]);
+              [paint.color.withValues(alpha: 0.0), paint.color]);
         final fadeOut = Paint()
           ..shader = ui.Gradient.linear(
               Offset(end - fadeDistance, rangeStyle.height / 2.0),
               Offset(end, rangeStyle.height / 2.0),
-              [paint.color, paint.color.withOpacity(0.0)]);
+              [paint.color, paint.color.withValues(alpha: 0.0)]);
 
         canvas.drawRect(
             Rect.fromLTWH(start, 0.0, fadeDistance, rangeStyle.height), fadeIn);

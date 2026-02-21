@@ -186,7 +186,7 @@ class _LineChartDataSeriesPainter extends CustomPainter {
     path.close();
 
     final fillPaint = Paint()
-      ..color = datasetStyle.color.withOpacity(datasetStyle.fillOpacity)
+      ..color = datasetStyle.color.withValues(alpha: datasetStyle.fillOpacity)
       ..isAntiAlias = true
       ..style = PaintingStyle.fill;
     canvas.drawPath(path, fillPaint);
